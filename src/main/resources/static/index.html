@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Comparison</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <h1>Phone Comparison</h1>
+</header>
+
+<!-- Navigation Bar Section -->
+<nav>
+    <ul id="navbar">
+        <li>Home</li>
+        <li>Compare</li>
+        <li>Contact</li>
+    </ul>
+</nav>
+
+<!-- Search Bar and Company Filter Section -->
+<div class="filters">
+    <!-- Frequency Counter Display -->
+    <div id="frequencyDisplay" style="display:none; padding-right: 10px;"></div>
+
+    <!-- Search Bar -->
+    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="filterPhones()">
+
+    <!-- Company Filter Dropdown -->
+    <select id="companyFilter" onchange="filterPhones()">
+        <option value="">Select Company</option>
+    </select>
+</div>
+
+<!-- Phone List Section -->
+<div class="phone-list-container">
+    <h2>Available Phones</h2>
+    <div id="phoneListContainer" class="phone-list"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

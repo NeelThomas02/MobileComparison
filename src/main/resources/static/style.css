@@ -1,0 +1,226 @@
+/* General Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Header Styling */
+header {
+    background-color: #1e3a8a;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-shadow: 1px 1px 4px #000000;
+}
+
+/* Navigation Bar Styling */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Navbar List */
+#navbar {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+}
+
+#navbar li {
+    cursor: pointer;
+    padding: 10px;
+    color: #1e3a8a;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+#navbar li:hover {
+    color: #2563eb;
+}
+
+/* Filters Section Styling (Search and Company Filter) */
+.filters {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#frequencyDisplay {
+    font-weight: bold;
+    color: #2563eb;
+    font-size: 16px;
+    display: none; /* Initially hidden */
+}
+
+#searchInput, #companyFilter {
+    padding: 10px;
+    font-size: 16px;
+    width: 250px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+#searchInput:focus, #companyFilter:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.2);
+}
+
+/* Phone List Styling */
+.phone-list-container {
+    margin-top: 20px;
+}
+
+.phone-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.phone-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+    background-color: #ffffff;
+    margin: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.phone-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.phone-item img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.phone-details h3 {
+    margin: 10px 0;
+    color: #1e3a8a;
+}
+
+.phone-details p {
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Button Styling */
+.button {
+    padding: 10px 20px;
+    background-color: #1e3a8a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background-color: #2563eb;
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .phone-list {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .phone-item {
+        width: 90%;
+    }
+}
+
+/* Comparison Table Styling */
+.comparison-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table thead th {
+    background-color: #3b82f6;
+    color: white;
+    padding: 15px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+table th, table td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #d1d5db;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+table tbody tr:hover {
+    background-color: #e0f2fe;
+}
+
+.comparison-header {
+    color: #1e3a8a;
+    margin-bottom: 20px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #1e3a8a;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #2563eb;
+}
