@@ -1,6 +1,3 @@
-// Object to track the frequency of each search term
-let searchFrequency = {};
-
 // Fetching the phone data from the backend
 async function getPhones() {
     try {
@@ -40,18 +37,12 @@ function displayPhones(phones) {
 function setupFilters(phones) {
     const searchInput = document.getElementById('searchInput');
     const companyFilter = document.getElementById('companyFilter');
-    const frequencyDisplay = document.getElementById('frequencyDisplay');
 
     // Handling search functionality
     searchInput.addEventListener('input', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const filteredPhones = filterPhones(phones, searchTerm, companyFilter.value);
         displayPhones(filteredPhones);
-
-        // Hide the frequency counter when the search term is empty
-        if (searchTerm.trim()) {
-            frequencyDisplay.style.display = 'none'; // Hide frequency counter if search term is typed
-        }
     });
 
     // Handling company filter functionality
@@ -62,44 +53,20 @@ function setupFilters(phones) {
     });
 
     // Populate the company filter with unique companies from the phones data
-    const companies = [...new Set(phones.map(phone => phone.model.split(" ")[0]))];
+    const companies = [...new Set(phones.map(phone => phone.company))]; // Reference the 'company' field
     companies.forEach(company => {
         const option = document.createElement('option');
         option.value = company;
         option.textContent = company;
         companyFilter.appendChild(option);
     });
-
-    // Handle the Enter key press to count search term frequency
-    searchInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            const searchTerm = searchInput.value.trim();
-            if (searchTerm) {
-                countSearchFrequency(searchTerm);
-            }
-        }
-    });
-}
-
-// Function to count and display the frequency of the exact search term when Enter is pressed
-function countSearchFrequency(searchTerm) {
-    const frequencyDisplay = document.getElementById('frequencyDisplay');
-
-    // Increment the frequency of the search term
-    searchFrequency[searchTerm] = (searchFrequency[searchTerm] || 0) + 1;
-
-    // Display the frequency of the search term
-    frequencyDisplay.innerHTML = `🔍: ${searchFrequency[searchTerm]}`;
-
-    // Show the frequency counter
-    frequencyDisplay.style.display = 'block';
 }
 
 // Function to filter the phones based on the search term and company
 function filterPhones(phones, searchTerm, selectedCompany) {
     return phones.filter(phone => {
         const matchesSearch = phone.model.toLowerCase().includes(searchTerm);
-        const matchesCompany = selectedCompany ? phone.model.startsWith(selectedCompany) : true;
+        const matchesCompany = selectedCompany ? phone.company === selectedCompany : true; // Adjusted to filter by company
         return matchesSearch && matchesCompany;
     });
 }

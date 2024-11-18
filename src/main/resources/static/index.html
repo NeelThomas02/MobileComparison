@@ -23,15 +23,13 @@
 
 <!-- Search Bar and Company Filter Section -->
 <div class="filters">
-    <!-- Frequency Counter Display -->
-    <div id="frequencyDisplay" style="display:none; padding-right: 10px;"></div>
-
     <!-- Search Bar -->
     <input type="text" id="searchInput" placeholder="Search for phones..." oninput="filterPhones()">
 
     <!-- Company Filter Dropdown -->
     <select id="companyFilter" onchange="filterPhones()">
         <option value="">Select Company</option>
+        <!-- Options will be dynamically populated by JavaScript -->
     </select>
 </div>
 
