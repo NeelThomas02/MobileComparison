@@ -45,11 +45,25 @@ public class PhoneService {
         phoneRepository.saveAll(phoneList);
     }
 
-    // Method to handle parsing of price strings
+    // Updated method to handle parsing of price strings
     private Float parsePrice(String rawPrice) {
         if (rawPrice == null || rawPrice.isEmpty()) return 0.0f;
-        rawPrice = rawPrice.replaceAll("[^\\d.]", "");
-        return rawPrice.isEmpty() ? 0.0f : Float.parseFloat(rawPrice);
+
+        // Remove any characters that are not digits or a single decimal point
+        String sanitizedPrice = rawPrice.replaceAll("[^\\d.]", "");
+
+        // Ensure only one decimal point exists
+        if (sanitizedPrice.indexOf('.') != sanitizedPrice.lastIndexOf('.')) {
+            System.err.println("Invalid price format with multiple decimal points: " + rawPrice);
+            return 0.0f; // Return default value or handle as needed
+        }
+
+        try {
+            return sanitizedPrice.isEmpty() ? 0.0f : Float.parseFloat(sanitizedPrice);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid price format: " + rawPrice);
+            return 0.0f;
+        }
     }
 
     // Method to get all phones
