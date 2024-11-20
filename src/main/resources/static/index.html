@@ -24,19 +24,32 @@
 <!-- Search Bar and Company Filter Section -->
 <div class="filters">
     <!-- Search Bar -->
-    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="filterPhones()">
+    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount()">
 
     <!-- Company Filter Dropdown -->
     <select id="companyFilter" onchange="filterPhones()">
         <option value="">Select Company</option>
-        <!-- Options will be dynamically populated by JavaScript -->
     </select>
+
+    <!-- Frequency Display Section -->
+    <div id="frequencyDisplay" style="display: none;"></div>
+
+    <!-- Suggestions Section -->
+    <div id="suggestionsContainer" style="display: none;"></div>
 </div>
 
 <!-- Phone List Section -->
 <div class="phone-list-container">
     <h2>Available Phones</h2>
     <div id="phoneListContainer" class="phone-list"></div>
+</div>
+
+<!-- Popup for error message -->
+<div id="errorPopup" class="popup-container" style="display: none;">
+    <div class="popup-content">
+        <span id="closePopup" class="popup-close">&times;</span>
+        <p id="errorMessage">Please enter the correct word.</p>
+    </div>
 </div>
 
 <script src="script.js"></script>

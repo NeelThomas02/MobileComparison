@@ -4,10 +4,11 @@ import com.example.phone_comparison_backend.model.Phone;
 import com.example.phone_comparison_backend.model.SearchTerm;
 import com.example.phone_comparison_backend.repository.PhoneRepository;
 import com.example.phone_comparison_backend.repository.SearchTermRepository;
-import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+
+import com.opencsv.CSVReader;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ public class PhoneService {
 
     @Autowired
     private SearchTermRepository searchTermRepository;
+
+    @Autowired
+    private SpellCheckService spellCheckService;  // Add SpellCheckService
 
     // Method to load phones from CSV
     public void loadPhonesFromCsv() throws Exception {
@@ -43,6 +47,8 @@ public class PhoneService {
             }
         }
         phoneRepository.saveAll(phoneList);
+        // After saving to the database, initialize the spell check
+        initializeSpellCheck();
     }
 
     // Updated method to handle parsing of price strings
@@ -105,5 +111,10 @@ public class PhoneService {
     // Method to get search term statistics
     public List<SearchTerm> getSearchStatistics() {
         return searchTermRepository.findAll();
+    }
+
+    // Initialize spell check by loading the vocabulary into the Trie
+    public void initializeSpellCheck() {
+        spellCheckService.loadVocabulary();
     }
 }

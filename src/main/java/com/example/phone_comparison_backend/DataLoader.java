@@ -24,5 +24,8 @@ public class DataLoader implements CommandLineRunner {
         } else {
             System.out.println("Data already exists in the database. Skipping CSV loading.");
         }
+
+        // Initialize the Trie with data from the database
+        phoneService.initializeSpellCheck();
     }
 }
