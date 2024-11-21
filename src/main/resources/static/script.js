@@ -1,5 +1,6 @@
 // Declare a global search term variable for use across different functions
 let searchTerm = '';
+let displayedPhones = []; // Global array to hold the currently displayed phones
 
 // Fetching the phone data from the backend
 async function getPhones() {
@@ -8,8 +9,9 @@ async function getPhones() {
         const phones = await response.json();
 
         if (phones.length > 0) {
-            displayPhones(phones); // Display all phones initially
-            setupFilters(phones); // Setup filters after fetching phones
+            displayedPhones = phones;  // Save all phones as the displayed list
+            displayPhones(phones);     // Display all phones initially
+            setupFilters(phones);      // Setup filters after fetching phones
         } else {
             alert("No phones available");
         }
@@ -80,11 +82,13 @@ async function handleSearchAndCount(event) {
             // Show phones for the suggested word
             const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
             const phones = await phoneResponse.json();
+            displayedPhones = phones; // Save the filtered phones
             displayPhones(phones); // Show phones for the suggested word
         } else {
             // If no suggestions (word exists in the vocabulary), show phones matching the search term
             const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
             const phones = await phoneResponse.json();
+            displayedPhones = phones; // Save the filtered phones
             displayPhones(phones); // Display phones for the search term
         }
 
@@ -134,40 +138,25 @@ function setupFilters(phones) {
 }
 
 // Function to apply sorting based on selected sort option
-async function applySort() {
+function applySort() {
     const sortFilter = document.getElementById('sortFilter');
     const sortOption = sortFilter.value;
 
-    try {
-        const sortRequest = {
-            sortBy: '',
-            ascending: true
-        };
+    if (displayedPhones.length === 0) return; // If no phones are displayed, do nothing
 
+    try {
         if (sortOption === 'priceLowHigh') {
-            sortRequest.sortBy = 'price';
-            sortRequest.ascending = true;
+            displayedPhones.sort((a, b) => a.price - b.price); // Sort by price low to high
         } else if (sortOption === 'priceHighLow') {
-            sortRequest.sortBy = 'price';
-            sortRequest.ascending = false;
+            displayedPhones.sort((a, b) => b.price - a.price); // Sort by price high to low
         } else if (sortOption === 'modelAZ') {
-            sortRequest.sortBy = 'model';
-            sortRequest.ascending = true;
+            displayedPhones.sort((a, b) => a.model.localeCompare(b.model)); // Sort by model A-Z
         } else if (sortOption === 'modelZA') {
-            sortRequest.sortBy = 'model';
-            sortRequest.ascending = false;
+            displayedPhones.sort((a, b) => b.model.localeCompare(a.model)); // Sort by model Z-A
         }
 
-        // Fetch sorted phones based on the selected sort option
-        const response = await fetch('/phones/sort', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(sortRequest)
-        });
-        const sortedPhones = await response.json();
-        displayPhones(sortedPhones); // Display the sorted phones
+        // Re-display the phones after sorting
+        displayPhones(displayedPhones);
 
     } catch (error) {
         console.error('Error applying sort:', error);
