@@ -12,6 +12,7 @@ async function getPhones() {
             displayedPhones = phones;
             displayPhones(phones);
             setupFilters(phones);
+            hideSearchInfo();
         } else {
             alert("No phones available");
         }
@@ -44,16 +45,26 @@ function displayPhones(phones) {
     }
 }
 
+function isAlphanumeric(str) {
+    return /^[a-zA-Z0-9\s+-]+$/.test(str);
+}
+
 // Function to handle the search and frequency count
 async function handleSearchAndCount(event) {
-    if (event.key !== 'Enter') return;
+    if (event.key === 'Enter' || event.target.value === ''){
 
     searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
 
     if (searchTerm === "") {
         getPhones();
+        hideSearchInfo(); // Hide search frequency and suggestions
         return;
     }
+
+            if (!isAlphanumeric(searchTerm)) {
+                alert("Please enter only alphanumeric characters.");
+                return;
+            }
 
     try {
         // Fetch phones based on search term
@@ -100,6 +111,12 @@ async function handleSearchAndCount(event) {
         console.error('Error handling search and count:', error);
         alert("Failed to fetch search results or frequency count");
     }
+    }
+}
+
+function hideSearchInfo() {
+    document.getElementById('frequencyDisplay').style.display = 'none';
+    document.getElementById('suggestionsContainer').style.display = 'none';
 }
 
 // Function to filter the phones based on the selected company
@@ -136,40 +153,96 @@ function setupFilters(phones) {
 function applySort() {
     const sortFilter = document.getElementById('sortFilter');
     const sortOption = sortFilter.value;
+    const companyFilter = document.getElementById('companyFilter');
+    const selectedCompany = companyFilter.value.trim().toLowerCase();
 
-    if (displayedPhones.length === 0) return;
+    if (displayedPhones.length === 0) return; // If no phones are displayed, do nothing
 
     try {
-        let sortedPhones = [...displayedPhones];
+        // First, filter by company if one is selected
+        let phonesToSort = selectedCompany
+            ? displayedPhones.filter(phone => phone.company.toLowerCase() === selectedCompany)
+            : displayedPhones;
 
-        switch(sortOption) {
-            case 'priceLowHigh':
-                sortedPhones.sort((a, b) => a.price - b.price);
-                break;
-            case 'priceHighLow':
-                sortedPhones.sort((a, b) => b.price - a.price);
-                break;
-            case 'modelAZ':
-                sortedPhones.sort((a, b) => a.model.localeCompare(b.model));
-                break;
-            case 'modelZA':
-                sortedPhones.sort((a, b) => b.model.localeCompare(a.model));
-                break;
+        // Then apply sorting
+        if (sortOption === 'priceLowHigh') {
+            phonesToSort.sort((a, b) => a.price - b.price);
+        } else if (sortOption === 'priceHighLow') {
+            phonesToSort.sort((a, b) => b.price - a.price);
+        } else if (sortOption === 'modelAZ') {
+            phonesToSort.sort((a, b) => a.model.localeCompare(b.model));
+        } else if (sortOption === 'modelZA') {
+            phonesToSort.sort((a, b) => b.model.localeCompare(a.model));
         }
 
-        displayPhones(sortedPhones);
+        // Re-display the phones after sorting
+        displayPhones(phonesToSort);
+
     } catch (error) {
         console.error('Error applying sort:', error);
         alert("Failed to sort phones");
     }
 }
 
-// Call the function to fetch and display phones when the page loads
+// Modify the filterPhones function to also apply current sort
+function filterPhones() {
+    const companyFilter = document.getElementById('companyFilter');
+    const selectedCompany = companyFilter.value.trim().toLowerCase();
+
+    const filteredPhones = displayedPhones.filter(phone =>
+        (selectedCompany === '' || phone.company.toLowerCase() === selectedCompany) &&
+        phone.model.toLowerCase().includes(searchTerm)
+    );
+
+    // Apply current sort to filtered phones
+    const sortFilter = document.getElementById('sortFilter');
+    const currentSort = sortFilter.value;
+
+    if (currentSort) {
+        applySort(); // This will now use the filtered phones
+    } else {
+        displayPhones(filteredPhones);
+    }
+}
+
+function resetAllFilters() {
+    // Reset search input
+    document.getElementById('searchInput').value = '';
+
+    // Reset company filter dropdown to default
+    document.getElementById('companyFilter').selectedIndex = 0;
+
+    // Reset sort filter dropdown to default
+    document.getElementById('sortFilter').selectedIndex = 0;
+
+    // Reset search term and displayed phones
+    searchTerm = '';
+
+    // Reload all phones
+    getPhones();
+
+    // Hide frequency and suggestions displays
+    document.getElementById('frequencyDisplay').style.display = 'none';
+    document.getElementById('suggestionsContainer').style.display = 'none';
+}
+
+// Update event listeners
 document.addEventListener('DOMContentLoaded', () => {
     getPhones();
 
     const searchInputField = document.getElementById('searchInput');
-    searchInputField.addEventListener('keyup', handleSearchAndCount);
+    searchInputField.addEventListener('keydown', handleSearchAndCount);
+    searchInputField.addEventListener('input', function(event) {
+        if (event.target.value === '') {
+            getPhones();
+        } else if (!isValidInput(event.target.value)) {
+            alert("Please enter only alphanumeric characters, spaces, plus (+), or minus (-).");
+            event.target.value = event.target.value.replace(/[^a-zA-Z0-9\s+-]/g, '');
+        }
+    });
+
+    const companyFilter = document.getElementById('companyFilter');
+    companyFilter.addEventListener('change', filterPhones);
 
     const sortFilter = document.getElementById('sortFilter');
     sortFilter.addEventListener('change', applySort);
