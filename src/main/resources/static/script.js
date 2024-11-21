@@ -1,6 +1,6 @@
+// Declare global variables
 let searchTerm = '';
-let displayedPhones = []; // Global array to hold the currently displayed phones
-let debounceTimeout; // For debounce functionality
+let displayedPhones = [];
 
 // Fetching the phone data from the backend
 async function getPhones() {
@@ -9,9 +9,9 @@ async function getPhones() {
         const phones = await response.json();
 
         if (phones.length > 0) {
-            displayedPhones = phones;  // Save all phones as the displayed list
-            displayPhones(phones);     // Display all phones initially
-            setupFilters(phones);      // Setup filters after fetching phones
+            displayedPhones = phones;
+            displayPhones(phones);
+            setupFilters(phones);
         } else {
             alert("No phones available");
         }
@@ -24,56 +24,60 @@ async function getPhones() {
 // Displaying the phones in the UI
 function displayPhones(phones) {
     const phoneListContainer = document.getElementById('phoneListContainer');
-    phoneListContainer.innerHTML = ''; // Clear existing content
+    phoneListContainer.innerHTML = '';
 
     if (phones.length > 0) {
         phones.forEach(phone => {
             const phoneItem = document.createElement('div');
             phoneItem.className = 'phone-item';
-            phoneItem.dataset.company = phone.company;  // Add the company to the phone item
+            phoneItem.dataset.company = phone.company;
             phoneItem.innerHTML = `
                 <img src="${phone.imageUrl}" alt="${phone.model}" />
                 <p>${phone.model}</p>
-                <p>$${phone.price}</p>
+                <p>$${phone.price.toFixed(2)}</p>
+                <p>Company: ${phone.company}</p>
             `;
             phoneListContainer.appendChild(phoneItem);
         });
     } else {
-        phoneListContainer.innerHTML = `<p>No phones found matching your search.</p>`;
+        phoneListContainer.innerHTML = '<p>No phones found matching your search.</p>';
     }
 }
 
-// Function to handle the search and frequency count with debounce
-function handleSearchAndCount(event) {
-    if (event.keyCode !== 13) return; // Trigger only on Enter key press
+// Function to handle the search and frequency count
+async function handleSearchAndCount(event) {
+    if (event.key !== 'Enter') return;
 
-    clearTimeout(debounceTimeout); // Clear the previous timeout if the user keeps typing
+    searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
 
-    debounceTimeout = setTimeout(async () => {
-        searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (searchTerm === "") {
+        getPhones();
+        return;
+    }
 
-        if (searchTerm === "") {
-            // Show all phones if input is empty
-            getPhones();
-            return;
-        }
+    try {
+        // Fetch phones based on search term
+        const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
+        const phones = await phoneResponse.json();
 
-        try {
-            // Fetch frequency count for search term from backend
-            const frequencyResponse = await fetch('/phones/searchFrequency', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ searchTerm })
-            });
-            const frequencyCount = await frequencyResponse.json();
+        // Fetch frequency count
+        const frequencyResponse = await fetch('/phones/searchFrequency', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ searchTerm })
+        });
+        const frequencyCount = await frequencyResponse.json();
 
-            // Display frequency count
-            document.getElementById('frequencyDisplay').style.display = 'block';
-            document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
+        // Display frequency count
+        document.getElementById('frequencyDisplay').style.display = 'block';
+        document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
 
-            // Fetch spelling suggestions from backend
+        if (phones.length > 0) {
+            displayedPhones = phones;
+            displayPhones(phones);
+            document.getElementById('suggestionsContainer').style.display = 'none';
+        } else {
+            // Fetch spelling suggestions if no phones found
             const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
             const suggestions = await suggestionsResponse.json();
 
@@ -81,53 +85,42 @@ function handleSearchAndCount(event) {
                 document.getElementById('suggestionsContainer').style.display = 'block';
                 document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
 
-                // Show phones for the suggested word
-                const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
-                const phones = await phoneResponse.json();
-                displayedPhones = phones; // Save the filtered phones
-                displayPhones(phones); // Show phones for the suggested word
+                // Fetch phones for the suggested word
+                const suggestedPhoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
+                const suggestedPhones = await suggestedPhoneResponse.json();
+                displayedPhones = suggestedPhones;
+                displayPhones(suggestedPhones);
             } else {
-                // If no suggestions (word exists in the vocabulary), show phones matching the search term
-                const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
-                const phones = await phoneResponse.json();
-                displayedPhones = phones; // Save the filtered phones
-                displayPhones(phones); // Display phones for the search term
+                displayedPhones = [];
+                displayPhones([]);
+                document.getElementById('suggestionsContainer').style.display = 'none';
             }
-
-        } catch (error) {
-            console.error('Error handling search and count:', error);
-            alert("Failed to fetch search suggestions or frequency count");
         }
-    }, 500); // 500 ms delay before triggering the search
+    } catch (error) {
+        console.error('Error handling search and count:', error);
+        alert("Failed to fetch search results or frequency count");
+    }
 }
 
 // Function to filter the phones based on the selected company
 function filterPhones() {
     const companyFilter = document.getElementById('companyFilter');
-    const selectedCompany = companyFilter.value.trim().toLowerCase();  // Get selected company from dropdown
+    const selectedCompany = companyFilter.value.trim().toLowerCase();
 
-    // Get all phone items in the DOM
-    const phones = Array.from(document.querySelectorAll('.phone-item'));
+    const filteredPhones = displayedPhones.filter(phone =>
+        (selectedCompany === '' || phone.company.toLowerCase() === selectedCompany) &&
+        phone.model.toLowerCase().includes(searchTerm)
+    );
 
-    // Filter phones based on company and search term
-    phones.forEach(phoneItem => {
-        const phoneModel = phoneItem.querySelector('p').textContent.toLowerCase();
-        const phoneCompany = phoneItem.dataset.company.toLowerCase();
-
-        if ((selectedCompany === '' || phoneCompany === selectedCompany) && phoneModel.includes(searchTerm)) {
-            phoneItem.style.display = 'block'; // Show matching phones
-        } else {
-            phoneItem.style.display = 'none';  // Hide non-matching phones
-        }
-    });
+    displayPhones(filteredPhones);
 }
 
 // Function to setup company filters in the dropdown
 function setupFilters(phones) {
     const companyFilter = document.getElementById('companyFilter');
-    const companies = [...new Set(phones.map(phone => phone.company))];  // Get unique companies
+    const companies = [...new Set(phones.map(phone => phone.company))];
 
-    companyFilter.innerHTML = '<option value="">Select Company</option>';  // Reset dropdown
+    companyFilter.innerHTML = '<option value="">Select Company</option>';
 
     companies.forEach(company => {
         const option = document.createElement('option');
@@ -136,8 +129,7 @@ function setupFilters(phones) {
         companyFilter.appendChild(option);
     });
 
-    // Event listener for dropdown change (filter phones by company)
-    companyFilter.addEventListener('change', filterPhones);  // Call filterPhones when company is selected
+    companyFilter.addEventListener('change', filterPhones);
 }
 
 // Function to apply sorting based on selected sort option
@@ -145,22 +137,27 @@ function applySort() {
     const sortFilter = document.getElementById('sortFilter');
     const sortOption = sortFilter.value;
 
-    if (displayedPhones.length === 0) return; // If no phones are displayed, do nothing
+    if (displayedPhones.length === 0) return;
 
     try {
-        if (sortOption === 'priceLowHigh') {
-            displayedPhones.sort((a, b) => a.price - b.price); // Sort by price low to high
-        } else if (sortOption === 'priceHighLow') {
-            displayedPhones.sort((a, b) => b.price - a.price); // Sort by price high to low
-        } else if (sortOption === 'modelAZ') {
-            displayedPhones.sort((a, b) => a.model.localeCompare(b.model)); // Sort by model A-Z
-        } else if (sortOption === 'modelZA') {
-            displayedPhones.sort((a, b) => b.model.localeCompare(a.model)); // Sort by model Z-A
+        let sortedPhones = [...displayedPhones];
+
+        switch(sortOption) {
+            case 'priceLowHigh':
+                sortedPhones.sort((a, b) => a.price - b.price);
+                break;
+            case 'priceHighLow':
+                sortedPhones.sort((a, b) => b.price - a.price);
+                break;
+            case 'modelAZ':
+                sortedPhones.sort((a, b) => a.model.localeCompare(b.model));
+                break;
+            case 'modelZA':
+                sortedPhones.sort((a, b) => b.model.localeCompare(a.model));
+                break;
         }
 
-        // Re-display the phones after sorting
-        displayPhones(displayedPhones);
-
+        displayPhones(sortedPhones);
     } catch (error) {
         console.error('Error applying sort:', error);
         alert("Failed to sort phones");
@@ -171,11 +168,9 @@ function applySort() {
 document.addEventListener('DOMContentLoaded', () => {
     getPhones();
 
-    // Set up the event listener for the search input field (Enter key)
     const searchInputField = document.getElementById('searchInput');
-    searchInputField.addEventListener('keydown', handleSearchAndCount);
+    searchInputField.addEventListener('keyup', handleSearchAndCount);
 
-    // Set up event listener for sort filter change
     const sortFilter = document.getElementById('sortFilter');
-    sortFilter.addEventListener('change', applySort); // Trigger sorting when a sort option is selected
+    sortFilter.addEventListener('change', applySort);
 });
