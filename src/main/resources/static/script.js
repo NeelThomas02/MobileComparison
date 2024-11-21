@@ -1,6 +1,6 @@
-// Declare a global search term variable for use across different functions
 let searchTerm = '';
 let displayedPhones = []; // Global array to hold the currently displayed phones
+let debounceTimeout; // For debounce functionality
 
 // Fetching the phone data from the backend
 async function getPhones() {
@@ -43,59 +43,62 @@ function displayPhones(phones) {
     }
 }
 
-// Function to handle the search and frequency count
-async function handleSearchAndCount(event) {
-    // Trigger only on Enter key press (key code 13)
-    if (event.keyCode !== 13) return; // Check if Enter key is pressed
+// Function to handle the search and frequency count with debounce
+function handleSearchAndCount(event) {
+    if (event.keyCode !== 13) return; // Trigger only on Enter key press
 
-    searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    clearTimeout(debounceTimeout); // Clear the previous timeout if the user keeps typing
 
-    if (searchTerm === "") {
-        // Show all phones if input is empty
-        getPhones();
-        return;
-    }
+    debounceTimeout = setTimeout(async () => {
+        searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
 
-    try {
-        // Fetch frequency count for search term from backend
-        const frequencyResponse = await fetch('/phones/searchFrequency', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ searchTerm })
-        });
-        const frequencyCount = await frequencyResponse.json();
-
-        // Display frequency count
-        document.getElementById('frequencyDisplay').style.display = 'block';
-        document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
-
-        // Fetch spelling suggestions from backend
-        const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
-        const suggestions = await suggestionsResponse.json();
-
-        if (suggestions.length > 0) {
-            document.getElementById('suggestionsContainer').style.display = 'block';
-            document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
-
-            // Show phones for the suggested word
-            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
-            const phones = await phoneResponse.json();
-            displayedPhones = phones; // Save the filtered phones
-            displayPhones(phones); // Show phones for the suggested word
-        } else {
-            // If no suggestions (word exists in the vocabulary), show phones matching the search term
-            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
-            const phones = await phoneResponse.json();
-            displayedPhones = phones; // Save the filtered phones
-            displayPhones(phones); // Display phones for the search term
+        if (searchTerm === "") {
+            // Show all phones if input is empty
+            getPhones();
+            return;
         }
 
-    } catch (error) {
-        console.error('Error handling search and count:', error);
-        alert("Failed to fetch search suggestions or frequency count");
-    }
+        try {
+            // Fetch frequency count for search term from backend
+            const frequencyResponse = await fetch('/phones/searchFrequency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm })
+            });
+            const frequencyCount = await frequencyResponse.json();
+
+            // Display frequency count
+            document.getElementById('frequencyDisplay').style.display = 'block';
+            document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
+
+            // Fetch spelling suggestions from backend
+            const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
+            const suggestions = await suggestionsResponse.json();
+
+            if (suggestions.length > 0) {
+                document.getElementById('suggestionsContainer').style.display = 'block';
+                document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
+
+                // Show phones for the suggested word
+                const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
+                const phones = await phoneResponse.json();
+                displayedPhones = phones; // Save the filtered phones
+                displayPhones(phones); // Show phones for the suggested word
+            } else {
+                // If no suggestions (word exists in the vocabulary), show phones matching the search term
+                const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
+                const phones = await phoneResponse.json();
+                displayedPhones = phones; // Save the filtered phones
+                displayPhones(phones); // Display phones for the search term
+            }
+
+        } catch (error) {
+            console.error('Error handling search and count:', error);
+            alert("Failed to fetch search suggestions or frequency count");
+        }
+    }, 500); // 500 ms delay before triggering the search
 }
 
 // Function to filter the phones based on the selected company

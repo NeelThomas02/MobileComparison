@@ -37,12 +37,7 @@
         <!-- Populate dynamically with companies -->
     </select>
 
-    <!-- Frequency Display Section -->
-    <div id="frequencyDisplay" style="display: none;"></div>
-
-    <!-- Suggestions Section -->
-    <div id="suggestionsContainer" style="display: none;"></div>
-
+   
     <!-- Sort Filter Dropdown -->
     <select id="sortFilter" onchange="applySort()">
         <option value="" disabled selected>Sort by</option> 
@@ -52,7 +47,13 @@
         <option value="modelZA">Models (Z-A)</option>
     </select>
 </div>
+<div class="filters">
+ <!-- Frequency Display Section -->
+ <div id="frequencyDisplay" style="display: none;"></div>
 
+ <!-- Suggestions Section -->
+ <div id="suggestionsContainer" style="display: none;"></div>
+</div>
 <!-- Phone List Section -->
 <div class="phone-list-container">
     <h2>Available Phones</h2>
