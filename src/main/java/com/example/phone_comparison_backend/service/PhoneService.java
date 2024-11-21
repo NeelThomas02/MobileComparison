@@ -25,7 +25,7 @@ public class PhoneService {
     private SearchTermRepository searchTermRepository;
 
     @Autowired
-    private SpellCheckService spellCheckService;  // Add SpellCheckService
+    private SpellCheckService spellCheckService;
 
     // Method to load phones from CSV
     public void loadPhonesFromCsv() throws Exception {
@@ -47,21 +47,18 @@ public class PhoneService {
             }
         }
         phoneRepository.saveAll(phoneList);
-        // After saving to the database, initialize the spell check
-        initializeSpellCheck();
+        initializeSpellCheck();  // Initialize spell check after saving phones
     }
 
-    // Updated method to handle parsing of price strings
+    // Method to handle parsing of price strings
     private Float parsePrice(String rawPrice) {
         if (rawPrice == null || rawPrice.isEmpty()) return 0.0f;
 
-        // Remove any characters that are not digits or a single decimal point
         String sanitizedPrice = rawPrice.replaceAll("[^\\d.]", "");
 
-        // Ensure only one decimal point exists
         if (sanitizedPrice.indexOf('.') != sanitizedPrice.lastIndexOf('.')) {
             System.err.println("Invalid price format with multiple decimal points: " + rawPrice);
-            return 0.0f; // Return default value or handle as needed
+            return 0.0f;
         }
 
         try {
@@ -72,12 +69,12 @@ public class PhoneService {
         }
     }
 
-    // Method to get all phones
+    // Fetch all phones from the database
     public List<Phone> getAllPhones() {
         return phoneRepository.findAll();
     }
 
-    // Method to search phones by model or company and track search terms
+    // Search phones by model or company and track search terms
     public List<Phone> searchPhones(String model, String company) {
         if (model != null && !model.isEmpty()) {
             trackSearchTerm(model); // Track model search
@@ -86,17 +83,72 @@ public class PhoneService {
             trackSearchTerm(company); // Track company search
         }
 
+        List<Phone> phones = new ArrayList<>();
         if (model != null && company != null) {
-            return phoneRepository.findByModelContainingAndCompany(model, company);
+            phones = phoneRepository.findByModelContainingAndCompany(model, company);
         } else if (model != null) {
-            return phoneRepository.findByModelContaining(model);
+            phones = phoneRepository.findByModelContaining(model);
         } else if (company != null) {
-            return phoneRepository.findByCompany(company);
+            phones = phoneRepository.findByCompany(company);
+        } else {
+            phones = phoneRepository.findAll();
         }
-        return phoneRepository.findAll();
+        return phones;
     }
 
-    // Method to track search terms and their frequencies
+    // Method to sort phones by price
+    public List<Phone> sortPhonesByPrice(List<Phone> phones, boolean ascending) {
+        quickSort(phones, 0, phones.size() - 1, ascending, "price");
+        return phones;
+    }
+
+    // Method to sort phones by model name
+    public List<Phone> sortPhonesByModel(List<Phone> phones, boolean ascending) {
+        quickSort(phones, 0, phones.size() - 1, ascending, "model");
+        return phones;
+    }
+
+    // Quick Sort Implementation for sorting
+    private void quickSort(List<Phone> phones, int low, int high, boolean ascending, String sortBy) {
+        if (low < high) {
+            int pivotIndex = partition(phones, low, high, ascending, sortBy);
+            quickSort(phones, low, pivotIndex - 1, ascending, sortBy);
+            quickSort(phones, pivotIndex + 1, high, ascending, sortBy);
+        }
+    }
+
+    // Partition function for Quick Sort
+    private int partition(List<Phone> phones, int low, int high, boolean ascending, String sortBy) {
+        Phone pivot = phones.get(high);
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            boolean condition = false;
+
+            if ("price".equalsIgnoreCase(sortBy)) {
+                condition = ascending ? phones.get(j).getPrice() < pivot.getPrice() : phones.get(j).getPrice() > pivot.getPrice();
+            }
+
+            if ("model".equalsIgnoreCase(sortBy)) {
+                condition = ascending ? phones.get(j).getModel().compareTo(pivot.getModel()) < 0 : phones.get(j).getModel().compareTo(pivot.getModel()) > 0;
+            }
+
+            if (condition) {
+                i++;
+                Phone temp = phones.get(i);
+                phones.set(i, phones.get(j));
+                phones.set(j, temp);
+            }
+        }
+
+        Phone temp = phones.get(i + 1);
+        phones.set(i + 1, phones.get(high));
+        phones.set(high, temp);
+
+        return i + 1;
+    }
+
+    // Track search terms and their frequencies
     private void trackSearchTerm(String term) {
         Optional<SearchTerm> existingTerm = searchTermRepository.findByTerm(term);
         if (existingTerm.isPresent()) {
@@ -108,7 +160,7 @@ public class PhoneService {
         }
     }
 
-    // Method to get search term statistics
+    // Get search term statistics
     public List<SearchTerm> getSearchStatistics() {
         return searchTermRepository.findAll();
     }

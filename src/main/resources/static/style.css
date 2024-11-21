@@ -130,6 +130,27 @@ nav {
     margin: 5px 0;
 }
 
+/* Align the Register and Login buttons to the right */
+.auth-links {
+    margin-left: auto; /* Push the Register and Login to the far right */
+    list-style: none;
+    display: flex;
+    gap: 10px; /* Space between Register and Login */
+}
+
+/* Styling for the Register and Login buttons */
+.auth-links li a {
+    text-decoration: none;
+    padding: 10px;
+    color: #1e3a8a;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for Register and Login buttons */
+.auth-links li a:hover {
+    color: #2563eb;
+}
 /* Button Styling */
 .button {
     padding: 10px 20px;
@@ -263,4 +284,127 @@ table tbody tr:hover {
 .popup-content p {
     font-size: 16px;
     color: #555;
+}
+
+/* Make the navbar a flex container */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for the main navbar items */
+#navbar {
+    display: flex;
+    list-style: none;
+    gap: 20px; /* Space out the items */
+    flex-grow: 1; /* Allow the navbar to grow and take available space */
+}
+
+/* Align the Register and Login buttons to the right */
+.auth-links {
+    margin-left: auto; /* Push the Register and Login to the far right */
+    list-style: none;
+    display: flex;
+    gap: 10px; /* Space between Register and Login */
+}
+
+/* Styling for the Register and Login buttons */
+.auth-links li a {
+    text-decoration: none;
+    padding: 10px;
+    color: #1e3a8a;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for Register and Login buttons */
+.auth-links li a:hover {
+    color: #2563eb;
+}
+/* Footer Styling */
+footer {
+    background-color: #1e3a8a; /* Dark blue background */
+    color: #ffffff; /* White text for contrast */
+    padding: 20px 40px;
+    margin-top: 40px;
+    border-radius: 10px;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.special-features h3 {
+    color: #ffffff; /* Heading in white for clarity */
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: center; /* Center the heading */
+}
+
+.features-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center; /* Align items in the center */
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.features-list li {
+    font-size: 16px;
+    margin: 5px 0;
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.features-list li:hover {
+    color: #2563eb; /* Lighter blue on hover for better contrast */
+    cursor: pointer;
+}
+
+/* Responsive Footer */
+@media screen and (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .features-list {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        text-align: center;
+    }
+}
+/* Ensure that the dropdown aligns to the right */
+.filters {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters select {
+    padding: 10px;
+    font-size: 16px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+.filters select:last-child {
+    margin-left: 900px; /* This will push the "Sort by" dropdown to the right */
 }

@@ -1,3 +1,6 @@
+// Declare a global search term variable for use across different functions
+let searchTerm = '';
+
 // Fetching the phone data from the backend
 async function getPhones() {
     try {
@@ -21,16 +24,21 @@ function displayPhones(phones) {
     const phoneListContainer = document.getElementById('phoneListContainer');
     phoneListContainer.innerHTML = ''; // Clear existing content
 
-    phones.forEach(phone => {
-        const phoneItem = document.createElement('div');
-        phoneItem.className = 'phone-item';
-        phoneItem.innerHTML = `
-            <img src="${phone.imageUrl}" alt="${phone.model}" />
-            <p>${phone.model}</p>
-            <p>$${phone.price}</p>
-        `;
-        phoneListContainer.appendChild(phoneItem);
-    });
+    if (phones.length > 0) {
+        phones.forEach(phone => {
+            const phoneItem = document.createElement('div');
+            phoneItem.className = 'phone-item';
+            phoneItem.dataset.company = phone.company;  // Add the company to the phone item
+            phoneItem.innerHTML = `
+                <img src="${phone.imageUrl}" alt="${phone.model}" />
+                <p>${phone.model}</p>
+                <p>$${phone.price}</p>
+            `;
+            phoneListContainer.appendChild(phoneItem);
+        });
+    } else {
+        phoneListContainer.innerHTML = `<p>No phones found matching your search.</p>`;
+    }
 }
 
 // Function to handle the search and frequency count
@@ -38,9 +46,9 @@ async function handleSearchAndCount(event) {
     // Trigger only on Enter key press (key code 13)
     if (event.keyCode !== 13) return; // Check if Enter key is pressed
 
-    const searchInput = document.getElementById('searchInput').value.trim().toLowerCase();
-    
-    if (searchInput === "") {
+    searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    if (searchTerm === "") {
         // Show all phones if input is empty
         getPhones();
         return;
@@ -53,7 +61,7 @@ async function handleSearchAndCount(event) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ searchTerm: searchInput })
+            body: JSON.stringify({ searchTerm })
         });
         const frequencyCount = await frequencyResponse.json();
 
@@ -62,24 +70,22 @@ async function handleSearchAndCount(event) {
         document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
 
         // Fetch spelling suggestions from backend
-        const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchInput)}`);
+        const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
         const suggestions = await suggestionsResponse.json();
 
-        // If suggestions are available, show them
         if (suggestions.length > 0) {
             document.getElementById('suggestionsContainer').style.display = 'block';
             document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
 
             // Show phones for the suggested word
-            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}&company=${encodeURIComponent(suggestions[0])}`);
+            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
             const phones = await phoneResponse.json();
-            displayPhones(phones);
-
+            displayPhones(phones); // Show phones for the suggested word
         } else {
-            // If no suggestions (word exists in the vocabulary), just show the phones
-            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchInput)}&company=${encodeURIComponent(searchInput)}`);
+            // If no suggestions (word exists in the vocabulary), show phones matching the search term
+            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
             const phones = await phoneResponse.json();
-            displayPhones(phones);
+            displayPhones(phones); // Display phones for the search term
         }
 
     } catch (error) {
@@ -88,17 +94,23 @@ async function handleSearchAndCount(event) {
     }
 }
 
-// Function to filter the phones based on the search term and company
-function filterPhones(searchTerm) {
-    const phones = Array.from(document.querySelectorAll('.phone-item'));  // Get all phone items in the DOM
+// Function to filter the phones based on the selected company
+function filterPhones() {
+    const companyFilter = document.getElementById('companyFilter');
+    const selectedCompany = companyFilter.value.trim().toLowerCase();  // Get selected company from dropdown
+
+    // Get all phone items in the DOM
+    const phones = Array.from(document.querySelectorAll('.phone-item'));
+
+    // Filter phones based on company and search term
     phones.forEach(phoneItem => {
         const phoneModel = phoneItem.querySelector('p').textContent.toLowerCase();
-        
-        // Show phone items that match the search term
-        if (phoneModel.includes(searchTerm)) {
-            phoneItem.style.display = 'block';
+        const phoneCompany = phoneItem.dataset.company.toLowerCase();
+
+        if ((selectedCompany === '' || phoneCompany === selectedCompany) && phoneModel.includes(searchTerm)) {
+            phoneItem.style.display = 'block'; // Show matching phones
         } else {
-            phoneItem.style.display = 'none';
+            phoneItem.style.display = 'none';  // Hide non-matching phones
         }
     });
 }
@@ -108,6 +120,8 @@ function setupFilters(phones) {
     const companyFilter = document.getElementById('companyFilter');
     const companies = [...new Set(phones.map(phone => phone.company))];  // Get unique companies
 
+    companyFilter.innerHTML = '<option value="">Select Company</option>';  // Reset dropdown
+
     companies.forEach(company => {
         const option = document.createElement('option');
         option.value = company;
@@ -115,15 +129,50 @@ function setupFilters(phones) {
         companyFilter.appendChild(option);
     });
 
-    // Filter phones by company when a company is selected
-    companyFilter.addEventListener('change', () => {
-        const selectedCompany = companyFilter.value.toLowerCase();
-        const phones = Array.from(document.querySelectorAll('.phone-item'));
-        phones.forEach(phoneItem => {
-            const phoneCompany = phoneItem.dataset.company.toLowerCase();
-            phoneItem.style.display = selectedCompany === '' || phoneCompany === selectedCompany ? 'block' : 'none';
+    // Event listener for dropdown change (filter phones by company)
+    companyFilter.addEventListener('change', filterPhones);  // Call filterPhones when company is selected
+}
+
+// Function to apply sorting based on selected sort option
+async function applySort() {
+    const sortFilter = document.getElementById('sortFilter');
+    const sortOption = sortFilter.value;
+
+    try {
+        const sortRequest = {
+            sortBy: '',
+            ascending: true
+        };
+
+        if (sortOption === 'priceLowHigh') {
+            sortRequest.sortBy = 'price';
+            sortRequest.ascending = true;
+        } else if (sortOption === 'priceHighLow') {
+            sortRequest.sortBy = 'price';
+            sortRequest.ascending = false;
+        } else if (sortOption === 'modelAZ') {
+            sortRequest.sortBy = 'model';
+            sortRequest.ascending = true;
+        } else if (sortOption === 'modelZA') {
+            sortRequest.sortBy = 'model';
+            sortRequest.ascending = false;
+        }
+
+        // Fetch sorted phones based on the selected sort option
+        const response = await fetch('/phones/sort', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sortRequest)
         });
-    });
+        const sortedPhones = await response.json();
+        displayPhones(sortedPhones); // Display the sorted phones
+
+    } catch (error) {
+        console.error('Error applying sort:', error);
+        alert("Failed to sort phones");
+    }
 }
 
 // Call the function to fetch and display phones when the page loads
@@ -133,4 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up the event listener for the search input field (Enter key)
     const searchInputField = document.getElementById('searchInput');
     searchInputField.addEventListener('keydown', handleSearchAndCount);
+
+    // Set up event listener for sort filter change
+    const sortFilter = document.getElementById('sortFilter');
+    sortFilter.addEventListener('change', applySort); // Trigger sorting when a sort option is selected
 });

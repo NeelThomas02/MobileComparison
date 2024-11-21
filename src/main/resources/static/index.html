@@ -15,9 +15,14 @@
 <!-- Navigation Bar Section -->
 <nav>
     <ul id="navbar">
-        <li>Home</li>
+        <li>Home </li>
         <li>Compare</li>
         <li>Contact</li>
+        <!-- Wrap Register and Login in a container to keep them together -->
+        <ul class="auth-links">
+            <li><a href=" " class="btn">Register</a></li>
+            <li><a href=" " class="btn">Login</a></li>
+        </ul>
     </ul>
 </nav>
 
@@ -29,6 +34,7 @@
     <!-- Company Filter Dropdown -->
     <select id="companyFilter" onchange="filterPhones()">
         <option value="">Select Company</option>
+        <!-- Populate dynamically with companies -->
     </select>
 
     <!-- Frequency Display Section -->
@@ -36,6 +42,15 @@
 
     <!-- Suggestions Section -->
     <div id="suggestionsContainer" style="display: none;"></div>
+
+    <!-- Sort Filter Dropdown -->
+    <select id="sortFilter" onchange="applySort()">
+        <option value="" disabled selected>Sort by</option> 
+        <option value="priceLowHigh">Price (Low-High)</option>
+        <option value="priceHighLow">Price (High-Low)</option>
+        <option value="modelAZ">Models (A-Z)</option>
+        <option value="modelZA">Models (Z-A)</option>
+    </select>
 </div>
 
 <!-- Phone List Section -->
@@ -51,6 +66,23 @@
         <p id="errorMessage">Please enter the correct word.</p>
     </div>
 </div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="footer-content">
+        <div class="special-features">
+            <h3>What Makes Our Project Special</h3>
+            <ul class="features-list">
+                <li>Front End GUI</li>
+                <li>Email validation and regular expressions</li>
+                <li>URL validation using patterns</li>
+                <li>Spell checking</li>
+                <li>Word completion</li>
+                <li>Frequency count</li>
+            </ul>
+        </div>
+    </div>
+</footer>
 
 <script src="script.js"></script>
 </body>

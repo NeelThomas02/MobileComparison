@@ -18,6 +18,7 @@ public class Phone {
 
     private String company; // Company name
 
+    // Default constructor
     public Phone() {}
 
     // Constructor to initialize the Phone object with the required fields
