@@ -51,66 +51,67 @@ function isAlphanumeric(str) {
 
 // Function to handle the search and frequency count
 async function handleSearchAndCount(event) {
-    if (event.key === 'Enter' || event.target.value === ''){
+    handleDatabaseWordCount();
+    if (event.key === 'Enter' || event.target.value === '') {
 
-    searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+        searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
 
-    if (searchTerm === "") {
-        getPhones();
-        hideSearchInfo(); // Hide search frequency and suggestions
-        return;
-    }
-
-            if (!isAlphanumeric(searchTerm)) {
-                alert("Please enter only alphanumeric characters.");
-                return;
-            }
-
-    try {
-        // Fetch phones based on search term
-        const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
-        const phones = await phoneResponse.json();
-
-        // Fetch frequency count
-        const frequencyResponse = await fetch('/phones/searchFrequency', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ searchTerm })
-        });
-        const frequencyCount = await frequencyResponse.json();
-
-        // Display frequency count
-        document.getElementById('frequencyDisplay').style.display = 'block';
-        document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
-
-        if (phones.length > 0) {
-            displayedPhones = phones;
-            displayPhones(phones);
-            document.getElementById('suggestionsContainer').style.display = 'none';
-        } else {
-            // Fetch spelling suggestions if no phones found
-            const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
-            const suggestions = await suggestionsResponse.json();
-
-            if (suggestions.length > 0) {
-                document.getElementById('suggestionsContainer').style.display = 'block';
-                document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
-
-                // Fetch phones for the suggested word
-                const suggestedPhoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
-                const suggestedPhones = await suggestedPhoneResponse.json();
-                displayedPhones = suggestedPhones;
-                displayPhones(suggestedPhones);
-            } else {
-                displayedPhones = [];
-                displayPhones([]);
-                document.getElementById('suggestionsContainer').style.display = 'none';
-            }
+        if (searchTerm === "") {
+            getPhones();
+            hideSearchInfo(); // Hide search frequency and suggestions
+            return;
         }
-    } catch (error) {
-        console.error('Error handling search and count:', error);
-        alert("Failed to fetch search results or frequency count");
-    }
+
+        if (!isAlphanumeric(searchTerm)) {
+            alert("Please enter only alphanumeric characters.");
+            return;
+        }
+
+        try {
+            // Fetch phones based on search term
+            const phoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(searchTerm)}`);
+            const phones = await phoneResponse.json();
+
+            // Fetch frequency count
+            const frequencyResponse = await fetch('/phones/searchFrequency', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ searchTerm })
+            });
+            const frequencyCount = await frequencyResponse.json();
+
+            // Display frequency count
+            document.getElementById('frequencyDisplay').style.display = 'block';
+            document.getElementById('frequencyDisplay').textContent = `Search Frequency: ${frequencyCount}`;
+
+            if (phones.length > 0) {
+                displayedPhones = phones;
+                displayPhones(phones);
+                document.getElementById('suggestionsContainer').style.display = 'none';
+            } else {
+                // Fetch spelling suggestions if no phones found
+                const suggestionsResponse = await fetch(`/phones/spellcheck?searchTerm=${encodeURIComponent(searchTerm)}`);
+                const suggestions = await suggestionsResponse.json();
+
+                if (suggestions.length > 0) {
+                    document.getElementById('suggestionsContainer').style.display = 'block';
+                    document.getElementById('suggestionsContainer').innerHTML = `Suggested word: ${suggestions[0]}`;
+
+                    // Fetch phones for the suggested word
+                    const suggestedPhoneResponse = await fetch(`/phones/search?model=${encodeURIComponent(suggestions[0])}`);
+                    const suggestedPhones = await suggestedPhoneResponse.json();
+                    displayedPhones = suggestedPhones;
+                    displayPhones(suggestedPhones);
+                } else {
+                    displayedPhones = [];
+                    displayPhones([]);
+                    document.getElementById('suggestionsContainer').style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error handling search and count:', error);
+            alert("Failed to fetch search results or frequency count");
+        }
     }
 }
 
@@ -247,3 +248,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortFilter = document.getElementById('sortFilter');
     sortFilter.addEventListener('change', applySort);
 });
+
+// Function to validate input
+function isValidInput(input) {
+    return /^[a-zA-Z0-9\s+-]*$/.test(input); // Validates alphanumeric characters, spaces, plus, and minus
+}
+
+async function handleDatabaseWordCount() {
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    const displayElement = document.getElementById('databaseWordCountDisplay');
+    
+    if (searchTerm.length > 0) {
+        try {
+            const response = await fetch(`/phones/database-word-count?term=${encodeURIComponent(searchTerm)}`);
+            if (response.ok) {
+                const count = await response.json();
+                displayElement.textContent = `Database occurrences: ${count}`;
+                displayElement.style.display = 'inline-block';
+            } else {
+                console.error('Failed to fetch database word count');
+                displayElement.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            displayElement.style.display = 'none';
+        }
+    } else {
+        displayElement.textContent = '';
+        displayElement.style.display = 'none';
+    }
+}

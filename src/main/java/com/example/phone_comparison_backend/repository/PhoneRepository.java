@@ -9,4 +9,4 @@ public interface PhoneRepository extends JpaRepository<Phone, Long> {
     List<Phone> findByCompany(String company); // Add query method for company
     List<Phone> findByModelContaining(String model); // Example search by model
     List<Phone> findByModelContainingAndCompany(String model, String company); // Search by model and company
-}
+    int countByModelContainingOrCompanyContaining(String model, String company);}

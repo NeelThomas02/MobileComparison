@@ -29,7 +29,8 @@
 <!-- Search Bar and Company Filter Section -->
 <div class="filters">
     <!-- Search Bar -->
-    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount()">
+    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount(); displayDatabaseWordCount()">
+    <div id="databaseWordCountDisplay"></div>
 
     <!-- Company Filter Dropdown -->
     <select id="companyFilter" onchange="filterPhones()">
@@ -48,13 +49,15 @@
     </select>
     <button id="resetFiltersBtn" class="button" onclick="resetAllFilters()">Reset Filters</button>
 </div>
-<div class="filters">
- <!-- Frequency Display Section -->
- <div id="frequencyDisplay" style="display: none;"></div>
 
+ <div class="filters">
  <!-- Suggestions Section -->
  <div id="suggestionsContainer" style="display: none;"></div>
 </div>
+<div class="filters">
+    <!-- Frequency Display Section -->
+    <div id="frequencyDisplay" style="display: none;"></div>
+    </div>
 <!-- Phone List Section -->
 <div class="phone-list-container">
     <h2>Available Phones</h2>
@@ -81,6 +84,7 @@
                 <li>Spell checking</li>
                 <li>Word completion</li>
                 <li>Frequency count</li>
+                <li>Search Frequency</li>
             </ul>
         </div>
     </div>

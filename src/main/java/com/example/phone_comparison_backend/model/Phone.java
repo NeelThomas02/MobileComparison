@@ -74,4 +74,5 @@ public class Phone {
     public String toString() {
         return "Phone{id=" + id + ", model='" + model + "', imageUrl='" + imageUrl + "', price=" + price + ", company='" + company + "'}";
     }
+    
 }
