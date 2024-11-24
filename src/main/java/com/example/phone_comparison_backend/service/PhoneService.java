@@ -1,6 +1,7 @@
 package com.example.phone_comparison_backend.service;
 
 import com.example.phone_comparison_backend.model.Phone;
+import com.example.phone_comparison_backend.model.PhoneComparison;
 import com.example.phone_comparison_backend.model.SearchTerm;
 import com.example.phone_comparison_backend.repository.PhoneRepository;
 import com.example.phone_comparison_backend.repository.SearchTermRepository;
@@ -54,6 +55,33 @@ public class PhoneService {
 
     public List<Phone> findPhonesByIds(List<Long> phoneIds) {
         return phoneRepository.findAllById(phoneIds);
+    }
+
+    public PhoneComparison comparePhonesDetailed(Long id1, Long id2) {
+        Phone phone1 = phoneRepository.findById(id1)
+                .orElseThrow(() -> new RuntimeException("Phone with id " + id1 + " not found"));
+        Phone phone2 = phoneRepository.findById(id2)
+                .orElseThrow(() -> new RuntimeException("Phone with id " + id2 + " not found"));
+    
+        StringBuilder comparisonBuilder = new StringBuilder();
+    
+        // Example comparisons
+        if (phone1.getPrice() < phone2.getPrice()) {
+            comparisonBuilder.append(phone1.getModel()).append(" is cheaper than ").append(phone2.getModel()).append(".\n");
+        } else if (phone1.getPrice() > phone2.getPrice()) {
+            comparisonBuilder.append(phone1.getModel()).append(" is more expensive than ").append(phone2.getModel()).append(".\n");
+        } else {
+            comparisonBuilder.append("Both phones have the same price.\n");
+        }
+    
+        // Add more comparisons based on other attributes
+        if (phone1.getCompany().equals(phone2.getCompany())) {
+            comparisonBuilder.append("Both phones are from the same company: ").append(phone1.getCompany()).append(".\n");
+        } else {
+            comparisonBuilder.append(phone1.getCompany()).append(" vs ").append(phone2.getCompany()).append(".\n");
+        }
+    
+        return new PhoneComparison(phone1, phone2, comparisonBuilder.toString());
     }
 
     private Float parsePrice(String rawPrice) {

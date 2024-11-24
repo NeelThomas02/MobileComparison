@@ -3,71 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compare Phones</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="compare.css"> <!-- Link to your CSS file -->
+    <title>Phone Comparison</title>
 </head>
 <body>
-<!-- Header Section -->
-<header>
-    <h1>Compare Smartphones</h1>
-</header>
-
-<!-- Navigation Bar -->
-<nav>
-    <ul id="navbar">
-        <li><a href="/">Home</a></li>
-        <li><a href="compare.html">Compare</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <ul class="auth-links">
-            <li><a href="registration.html" class="btn">Register</a></li>
-            <li><a href="login.html" class="btn">Login</a></li>
-        </ul>
-    </ul>
-</nav>
-
-<!-- Comparison Section -->
-<section class="comparison-section">
-    <div class="comparison-instructions">
-        <p>Select phones to compare from the list below.</p>
+<div class="container">
+    <h1>Compare Phones</h1>
+    
+    <div class="select-container">
+        <select id="phone1Select">
+            <!-- Options for Phone 1 -->
+        </select>
+        <select id="phone2Select">
+            <!-- Options for Phone 2 -->
+        </select>
+        <button id="compareButton">Compare</button>
     </div>
 
-    <!-- Phone List for Selection -->
-    <div id="phoneListContainer" class="phone-list">
-        <!-- Dynamically populated -->
-    </div>
-
-    <!-- Compare Button -->
-    <div class="comparison-controls">
-        <button id="compareBtn" class="button" onclick="comparePhones()">Compare Selected</button>
-    </div>
-
-    <!-- Comparison Table -->
-    <div id="comparisonContainer" class="comparison-container" style="display: none;">
-        <h2>Phone Comparison</h2>
-        <table id="comparisonTable">
+    <div class="comparisonResultContainer" id="comparisonResultContainer">
+        <!-- Comparison results will be displayed here -->
+        <table>
             <thead>
-            <tr>
-                <th>Feature</th>
-                <th>Phone 1</th>
-                <th>Phone 2</th>
-            </tr>
+                <tr>
+                    <th>Feature</th>
+                    <th>Phone 1</th>
+                    <th>Phone 2</th>
+                </tr>
             </thead>
             <tbody>
-            <!-- Dynamically populated -->
+                <!-- Comparison data will be inserted here -->
             </tbody>
         </table>
     </div>
-</section>
+</div>
 
-<!-- Footer Section -->
-<footer id="contact">
-    <div class="footer-content">
-        <h3>Contact Us</h3>
-        <p>Email: support@phones.com</p>
-        <p>Phone: +1 234 567 890</p>
-    </div>
-</footer>
-
-<script src="compare.js"></script>
+<script src="compare.js"></script> <!-- Link to your JavaScript file -->
 </body>
 </html>

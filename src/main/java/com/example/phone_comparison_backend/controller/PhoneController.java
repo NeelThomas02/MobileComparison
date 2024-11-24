@@ -10,6 +10,7 @@ import com.example.phone_comparison_backend.util.WordCompletion;
 import com.example.phone_comparison_backend.model.Phone;
 import com.example.phone_comparison_backend.model.SearchTerm;
 import com.example.phone_comparison_backend.model.SortRequest;
+import com.example.phone_comparison_backend.model.PhoneComparison;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,6 +46,20 @@ public class PhoneController {
     @Autowired
     public PhoneController(PhoneRepository phoneRepository) {
         this.phoneRepository = phoneRepository;
+    }
+
+    @GetMapping("/compare/detailed")
+    public ResponseEntity<PhoneComparison> comparePhonesDetailed(@RequestParam Long id1, @RequestParam Long id2) {
+        try {
+            PhoneComparison comparison = phoneService.comparePhonesDetailed(id1, id2);
+            return ResponseEntity.ok(comparison);
+        } catch (RuntimeException e) {
+            System.err.println("Runtime exception while comparing phones: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            System.err.println("Error comparing phones: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     // Enable CORS for all origins (can be restricted later if needed)
