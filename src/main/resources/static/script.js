@@ -9,10 +9,12 @@ async function getPhones() {
         const phones = await response.json();
 
         if (phones.length > 0) {
-            displayedPhones = phones;
-            displayPhones(phones);
-            setupFilters(phones);
-            hideSearchInfo();
+            displayedPhones = phones.map(phone => ({
+                ...phone,
+                productLink: phone.productLink || '#' // Use a default link if not provided
+            }));
+            displayPhones(displayedPhones);
+            setupFilters(displayedPhones);
         } else {
             alert("No phones available");
         }
@@ -34,14 +36,13 @@ function displayPhones(phones) {
             phoneItem.dataset.company = phone.company;
             phoneItem.innerHTML = `
                 <img src="${phone.imageUrl}" alt="${phone.model}" />
-                <p>${phone.model}</p>
-                <p>$${phone.price.toFixed(2)}</p>
-                <p>Company: ${phone.company}</p>
+                <p><a href="${phone.productLink}" target="_blank">${phone.model}</a></p>
+                <p>$${phone.price}</p>
             `;
             phoneListContainer.appendChild(phoneItem);
         });
     } else {
-        phoneListContainer.innerHTML = '<p>No phones found matching your search.</p>';
+        phoneListContainer.innerHTML = `<p>No phones found matching your search.</p>`;
     }
 }
 
@@ -51,7 +52,8 @@ function isAlphanumeric(str) {
 
 // Function to handle the search and frequency count
 async function handleSearchAndCount(event) {
-    handleDatabaseWordCount();
+
+    // This is part of your existing method
     if (event.key === 'Enter' || event.target.value === '') {
 
         searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -240,6 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Please enter only alphanumeric characters, spaces, plus (+), or minus (-).");
             event.target.value = event.target.value.replace(/[^a-zA-Z0-9\s+-]/g, '');
         }
+
+        // Trigger word completion on input change
+        handleWordCompletion();
     });
 
     const companyFilter = document.getElementById('companyFilter');
@@ -254,27 +259,100 @@ function isValidInput(input) {
     return /^[a-zA-Z0-9\s+-]*$/.test(input); // Validates alphanumeric characters, spaces, plus, and minus
 }
 
-async function handleDatabaseWordCount() {
-    const searchTerm = document.getElementById('searchInput').value.trim();
-    const displayElement = document.getElementById('databaseWordCountDisplay');
-    
-    if (searchTerm.length > 0) {
+
+// Handling word completion and displaying suggestions
+async function handleWordCompletion() {
+    console.log("handleWordCompletion function triggered");
+
+    const searchInput = document.getElementById('searchInput').value.trim();
+
+    if (searchInput.length > 0) {
         try {
-            const response = await fetch(`/phones/database-word-count?term=${encodeURIComponent(searchTerm)}`);
+            console.log("Fetching word completion for:", searchInput);
+            const response = await fetch(`/phones/word-completion?prefix=${encodeURIComponent(searchInput)}`);
+
             if (response.ok) {
-                const count = await response.json();
-                displayElement.textContent = `Database occurrences: ${count}`;
-                displayElement.style.display = 'inline-block';
+                const suggestions = await response.json();
+                console.log("Suggestions received:", suggestions);
+
+                if (suggestions && suggestions.length > 0) {
+                    displaySuggestions(suggestions);
+                } else {
+                    document.getElementById('suggestionsContainer').style.display = 'none';
+                }
             } else {
-                console.error('Failed to fetch database word count');
-                displayElement.style.display = 'none';
+                console.error("Error fetching suggestions:", response.statusText);
             }
         } catch (error) {
-            console.error('Error:', error);
-            displayElement.style.display = 'none';
+            console.error("Error fetching word completion suggestions:", error);
         }
     } else {
+        document.getElementById('suggestionsContainer').style.display = 'none';
+    }
+}
+
+function displaySuggestions(suggestions) {
+    console.log("Displaying suggestions:", suggestions);
+    const suggestionsContainer = document.getElementById('suggestionsContainer');
+    suggestionsContainer.innerHTML = '';
+
+    if (suggestions.length > 0) {
+        suggestions.forEach(suggestion => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.textContent = suggestion;
+            suggestionItem.classList.add('suggestion-item');
+
+            suggestionItem.onclick = () => {
+                document.getElementById('searchInput').value = suggestion;
+                suggestionsContainer.style.display = 'none';
+                handleSearchAndCount({ key: 'Enter' });
+            };
+
+            suggestionsContainer.appendChild(suggestionItem);
+        });
+
+        suggestionsContainer.style.display = 'block';
+    } else {
+        suggestionsContainer.style.display = 'none';
+    }
+}
+async function displayDatabaseWordCount() {
+    // Log the data (you can remove this if not needed for debugging)
+    console.log("Data");
+
+    // Get the search term from the input field and remove leading/trailing spaces
+    const searchTerm = document.getElementById('searchInput').value.trim();
+
+    // Get the element where we want to display the word count
+    const displayElement = document.getElementById('databaseWordCountDisplay');
+
+    // Check if the search term is not empty
+    if (searchTerm.length > 0) {
+        try {
+            // Send a GET request to the server with the search term as a query parameter
+            const response = await fetch(`/phones/database-word-count?term=${encodeURIComponent(searchTerm)}`);
+
+            // If the response is successful (status code 200)
+            if (response.ok) {
+                // Parse the JSON response to get the word count
+                const count = await response.json();
+
+                // Update the display with the word count
+                displayElement.textContent = `Database occurrences: ${count}`;
+                displayElement.style.display = 'inline-block'; // Make the display element visible
+            } else {
+                // If the response was not successful, log an error and hide the display element
+                console.error('Failed to fetch database word count');
+                displayElement.style.display = 'none'; // Hide the element in case of failure
+            }
+        } catch (error) {
+            // If there's an error (e.g., network issues), log it and hide the display element
+            console.error('Error:', error);
+            displayElement.style.display = 'none'; // Hide the element in case of error
+        }
+    } else {
+        // If the search term is empty, clear the display element and hide it
         displayElement.textContent = '';
-        displayElement.style.display = 'none';
+        displayElement.style.display = 'none'; // Hide the element when there's no search term
     }
 }

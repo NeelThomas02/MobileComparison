@@ -9,19 +9,18 @@
 <body>
 <!-- Header Section -->
 <header>
-    <h1>Phone Comparison</h1>
+    <h1>Smartphone Recommendation System</h1>
 </header>
 
 <!-- Navigation Bar Section -->
 <nav>
     <ul id="navbar">
         <li><a href="/"> Home </a></li>
-        <li>Compare</li>
         <li>Contact</li>
         <!-- Wrap Register and Login in a container to keep them together -->
         <ul class="auth-links">
-            <li><a href=" " class="btn">Register</a></li>
-            <li><a href=" " class="btn">Login</a></li>
+            <li><a href="registration.html" class="btn">Register</a></li> <!-- Link to Register Page -->
+            <li><a href="./login.html" class="btn">Login</a></li>
         </ul>
     </ul>
 </nav>
@@ -29,7 +28,7 @@
 <!-- Search Bar and Company Filter Section -->
 <div class="filters">
     <!-- Search Bar -->
-    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount(); displayDatabaseWordCount()">
+    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount(); displayDatabaseWordCount(); handleWordCompletion()">
     <div id="databaseWordCountDisplay"></div>
 
     <!-- Company Filter Dropdown -->
@@ -38,10 +37,10 @@
         <!-- Populate dynamically with companies -->
     </select>
 
-   
+
     <!-- Sort Filter Dropdown -->
     <select id="sortFilter" onchange="applySort()">
-        <option value="" disabled selected>Sort by</option> 
+        <option value="" disabled selected>Sort by</option>
         <option value="priceLowHigh">Price (Low-High)</option>
         <option value="priceHighLow">Price (High-Low)</option>
         <option value="modelAZ">Models (A-Z)</option>
@@ -52,7 +51,7 @@
 
  <div class="filters">
  <!-- Suggestions Section -->
- <div id="suggestionsContainer" style="display: none;"></div>
+ <div id="suggestionsContainer" style="display: none; border: 1px solid #ccc; max-height: 200px; overflow-y: auto;"></div>
 </div>
 <div class="filters">
     <!-- Frequency Display Section -->

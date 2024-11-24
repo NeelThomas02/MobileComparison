@@ -18,15 +18,27 @@ public class Phone {
 
     private String company; // Company name
 
+    private String productLink;
+
+    // Add getter and setter for productLink
+    public String getProductLink() {
+        return productLink;
+    }
+
+    public void setProductLink(String productLink) {
+        this.productLink = productLink;
+    }
+
     // Default constructor
     public Phone() {}
 
     // Constructor to initialize the Phone object with the required fields
-    public Phone(String model, String imageUrl, Float price, String company) {
+    public Phone(String model, String imageUrl, Float price, String company, String productLink) {
         this.model = model;
         this.imageUrl = imageUrl;
         this.price = price;
         this.company = company;
+        this.productLink = productLink;
     }
 
     // Getters and Setters

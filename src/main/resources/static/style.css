@@ -35,13 +35,14 @@ nav {
 #navbar {
     display: flex;
     list-style: none;
-    gap: 15px;
+    gap: 20px;
 }
 
 #navbar li {
     cursor: pointer;
     padding: 10px;
     color: #1e3a8a;
+    font-size: 20px;
     font-weight: bold;
     transition: color 0.3s ease;
 }
@@ -65,7 +66,13 @@ nav {
     font-size: 16px;
     display: none; /* Initially hidden */
 }
+#suggestionsContainer {
+    font-weight: bold;
+    color: #2563eb;
+    font-size: 16px;
+    display: none; /* Initially hidden */
 
+}
 #searchInput, #companyFilter, #sortFilter {
     padding: 10px;
     font-size: 16px;
@@ -338,4 +345,124 @@ nav {
 /* Hover effect for Register and Login buttons */
 .auth-links li a:hover {
     color: #2563eb;
+}
+
+/* Login and Registration Form Container */
+.login-container, .registration-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+}
+
+.login-box, .registration-box {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #1e3a8a;
+}
+
+/* Form Inputs Styling */
+.textbox input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.textbox input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.2);
+}
+
+/* Text Links Styling */
+.link-button {
+    background: none;
+    border: none;
+    color: #1e3a8a;
+    text-decoration: underline;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.link-button:hover {
+    color: #2563eb;
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-links a {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.link-text {
+    color: #1e3a8a;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.link-text:hover {
+    color: #2563eb;
+}
+
+/* Suggestions Container */
+ #suggestionsContainer {
+     position: absolute; /* Position relative to parent container */
+
+     left: 0; /* Align with the left edge of the search bar */
+     background-color: white;
+     border: 1px solid #ccc; /* Same border style as the search bar */
+     border-radius: 4px; /* Optional rounded corners */
+     max-height: 200px; /* Limit height and enable scrolling if needed */
+     overflow-y: auto;
+     z-index: 10; /* Ensure it appears above other elements */
+     width: 100%; /* Match the width of the search bar */
+     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+ }
+
+ /* Parent Container */
+ .filters {
+     position: relative; /* Set parent container as relative for absolute positioning of suggestions */
+ }
+  /* Suggestion Items (Optional Styling) */
+ .suggestion-item {
+     padding: 8px;
+     cursor: pointer;
+ }
+
+ .suggestion-item:hover {
+     background-color: #f0f0f0;
+ }
+.suggestion-item {
+    padding: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+a{
+    text-decoration: none;
 }

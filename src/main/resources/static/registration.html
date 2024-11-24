@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0066cc;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004d99;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #cc0000;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+            /* Initially hidden */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Registration Page</h2>
+        <form id="registrationForm" action="/auth/register" method="post">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <p id="usernameError" class="error-message"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <p id="emailError" class="error-message"></p>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <p id="passwordError" class="error-message"></p>
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <p id="message"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById("registrationForm");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: formData,
+            });
+
+            // Hide previous error messages
+            document.getElementById("usernameError").style.display = "none";
+            document.getElementById("emailError").style.display = "none";
+            document.getElementById("passwordError").style.display = "none";
+
+            if (response.redirected) {
+                window.location.href = response.url; // Redirect to the login page
+            } else {
+                const errorText = await response.text();
+                const messageLines = errorText.split("\n");
+
+                messageLines.forEach((line) => {
+                    if (line.includes("Invalid username")) {
+                        document.getElementById("usernameError").textContent = line;
+                        document.getElementById("usernameError").style.display = "block";
+                    }
+                    if (line.includes("Invalid email format")) {
+                        document.getElementById("emailError").textContent = line;
+                        document.getElementById("emailError").style.display = "block";
+                    }
+                    if (line.includes("Invalid password")) {
+                        document.getElementById("passwordError").textContent = line;
+                        document.getElementById("passwordError").style.display = "block";
+                    }
+                    if (line.includes("Username is already taken")) {
+                        alert("Username already taken. Please try another.");
+                    }
+                    if (line.includes("Email is already registered")) {
+                        alert("This email is already registered. Please login.");
+                    }
+                });
+            }
+        });
+
+    </script>
+</body>
+
+</html>
