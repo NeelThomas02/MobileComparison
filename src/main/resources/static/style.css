@@ -466,3 +466,55 @@ h2 {
 a{
     text-decoration: none;
 }
+
+#compareContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#phoneSelectionContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+#phone1Select, #phone2Select {
+    width: 40%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+#compareButton {
+    width: 15%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#compareButton:hover {
+    background-color: #45a049;
+}
+
+#comparisonResultContainer {
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}

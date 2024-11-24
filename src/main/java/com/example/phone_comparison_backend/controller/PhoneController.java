@@ -1,5 +1,6 @@
 package com.example.phone_comparison_backend.controller;
 
+import com.example.phone_comparison_backend.repository.PhoneRepository;
 import com.example.phone_comparison_backend.service.DatabaseWordCountService;
 import com.example.phone_comparison_backend.service.FrequencyCountService;
 import com.example.phone_comparison_backend.service.PhoneService;
@@ -36,8 +37,15 @@ public class PhoneController {
     @Autowired
     private DatabaseWordCountService databaseWordCountService;
 
+    private final PhoneRepository phoneRepository;
+
     @Autowired
     private WordCompletion wordCompletionService; // WordCompletion service for word suggestions
+
+    @Autowired
+    public PhoneController(PhoneRepository phoneRepository) {
+        this.phoneRepository = phoneRepository;
+    }
 
     // Enable CORS for all origins (can be restricted later if needed)
     @CrossOrigin(origins = "*")
@@ -154,5 +162,4 @@ public class PhoneController {
         System.out.println("Returning models: " + models); // Debugging line
         return models;
     }
-
 }

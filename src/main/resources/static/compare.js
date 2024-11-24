@@ -1,93 +1,128 @@
-window.onload = function() {
-    // Retrieve selected phones from localStorage
-    const selectedPhones = JSON.parse(localStorage.getItem('selectedPhones'));
+// Array to store selected phones for comparison
+let selectedPhones = [];
 
-    if (selectedPhones && selectedPhones.length === 2) {
-        const comparisonTable = document.getElementById('comparisonTable');
+// Function to fetch and display the list of phones
+async function fetchPhonesForComparison() {
+    try {
+        const response = await fetch('/phones');
+        const phones = await response.json();
 
-        // Retrieve phone data (including new attributes)
-        const phones = {
-            Apple: [
-                { name: "iPhone 14", price: "$799", image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/IPhone_14_Pro_Space_Black.svg", display: "6.1 inch", battery: "20 hours", processor: "A15 Bionic", ram: "4GB", storage: "128GB", camera: "12MP", os: "iOS 16" },
-                { name: "iPhone 14 Pro", price: "$999", image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/IPhone_14_Pro_Space_Black.svg", display: "6.1 inch", battery: "23 hours", processor: "A16 Bionic", ram: "6GB", storage: "128GB", camera: "48MP", os: "iOS 16" },
-                { name: "iPhone SE (2023)", price: "$429", image: "https://upload.wikimedia.org/wikipedia/commons/2/2e/IPhone_SE_3rd_Gen.svg", display: "4.7 inch", battery: "15 hours", processor: "A15 Bionic", ram: "4GB", storage: "64GB", camera: "12MP", os: "iOS 16" },
-            ],
-            Samsung: [
-                { name: "Galaxy S23", price: "$849", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Samsung_Galaxy_S23.svg/1200px-Samsung_Galaxy_S23.svg.png", display: "6.1 inch", battery: "22 hours", processor: "Snapdragon 8 Gen 2", ram: "8GB", storage: "128GB", camera: "50MP", os: "Android 13" },
-                { name: "Galaxy Z Flip 5", price: "$999", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Samsung_Galaxy_Z_Flip5.svg/1200px-Samsung_Galaxy_Z_Flip5.svg.png", display: "6.7 inch", battery: "22 hours", processor: "Snapdragon 8 Gen 2", ram: "8GB", storage: "256GB", camera: "12MP", os: "Android 13" },
-                { name: "Galaxy A54", price: "$449", image: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Samsung_Galaxy_A54.svg", display: "6.4 inch", battery: "20 hours", processor: "Exynos 1380", ram: "6GB", storage: "128GB", camera: "50MP", os: "Android 13" },
-            ],
-            Google: [
-                { name: "Pixel 8", price: "$699", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Google_Pixel_8.svg/1200px-Google_Pixel_8.svg.png", display: "6.2 inch", battery: "20 hours", processor: "Google Tensor G3", ram: "8GB", storage: "128GB", camera: "50MP", os: "Android 14" },
-                { name: "Pixel 8 Pro", price: "$999", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Google_Pixel_8_Pro.svg/1200px-Google_Pixel_8_Pro.svg.png", display: "6.7 inch", battery: "22 hours", processor: "Google Tensor G3", ram: "12GB", storage: "128GB", camera: "50MP", os: "Android 14" },
-                { name: "Pixel Fold", price: "$1799", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Google_Pixel_Fold.svg/1200px-Google_Pixel_Fold.svg.png", display: "7.6 inch", battery: "24 hours", processor: "Google Tensor G2", ram: "12GB", storage: "256GB", camera: "48MP", os: "Android 14" },
-            ]
-        };
-
-        // Find the selected phones' data
-        let phone1, phone2;
-        for (const company in phones) {
-            phones[company].forEach(phone => {
-                if (phone.name === selectedPhones[0]) {
-                    phone1 = phone;
-                }
-                if (phone.name === selectedPhones[1]) {
-                    phone2 = phone;
-                }
-            });
+        if (phones.length > 0) {
+            displayPhoneSelectionList(phones);
+        } else {
+            alert('No phones available for comparison.');
         }
-
-        // Insert the comparison data into the table
-        if (phone1 && phone2) {
-            comparisonTable.innerHTML = `
-                <tr>
-                    <td>Model</td>
-                    <td> ${phone1.name}</td>
-                    <td> ${phone2.name}</td>
-                </tr>
-                <tr>
-                    <td>Price</td>
-                    <td>${phone1.price}</td>
-                    <td>${phone2.price}</td>
-                </tr>
-                <tr>
-                    <td>Display</td>
-                    <td>${phone1.display}</td>
-                    <td>${phone2.display}</td>
-                </tr>
-                <tr>
-                    <td>Battery Life</td>
-                    <td>${phone1.battery}</td>
-                    <td>${phone2.battery}</td>
-                </tr>
-                <tr>
-                    <td>Processor</td>
-                    <td>${phone1.processor}</td>
-                    <td>${phone2.processor}</td>
-                </tr>
-                <tr>
-                    <td>RAM</td>
-                    <td>${phone1.ram}</td>
-                    <td>${phone2.ram}</td>
-                </tr>
-                <tr>
-                    <td>Storage</td>
-                    <td>${phone1.storage}</td>
-                    <td>${phone2.storage}</td>
-                </tr>
-                <tr>
-                    <td>Camera</td>
-                    <td>${phone1.camera}</td>
-                    <td>${phone2.camera}</td>
-                </tr>
-                <tr>
-                    <td>OS</td>
-                    <td>${phone1.os}</td>
-                    <td>${phone2.os}</td>
-                </tr>
-            `;
-        }
-    } else {
-        window.location.href = 'index.html';
+    } catch (error) {
+        console.error('Error fetching phones:', error);
+        alert('Failed to load phone data.');
     }
-};
+}
+
+// Function to display the phone selection list
+function displayPhoneSelectionList(phones) {
+    const phoneListContainer = document.getElementById('phoneListContainer');
+    phoneListContainer.innerHTML = ''; // Clear existing content
+
+    phones.forEach((phone) => {
+        const phoneItem = document.createElement('div');
+        phoneItem.className = 'phone-item';
+
+        phoneItem.innerHTML = `
+            <img src="${phone.imageUrl}" alt="${phone.model}" />
+            <p>${phone.model}</p>
+            <p>$${phone.price}</p>
+            <input 
+                type="checkbox" 
+                class="compare-checkbox" 
+                value="${phone.id}" 
+                onchange="handlePhoneSelection(${phone.id}, '${phone.model}')"
+            /> Compare
+        `;
+
+        phoneListContainer.appendChild(phoneItem);
+    });
+}
+
+// Function to handle phone selection for comparison
+function handlePhoneSelection(phoneId, phoneModel) {
+    const checkbox = document.querySelector(`input[value="${phoneId}"]`);
+
+    if (checkbox.checked) {
+        if (selectedPhones.length >= 2) {
+            alert('You can only compare up to 2 phones.');
+            checkbox.checked = false;
+            return;
+        }
+        selectedPhones.push({ id: phoneId, model: phoneModel });
+    } else {
+        selectedPhones = selectedPhones.filter((phone) => phone.id !== phoneId);
+    }
+
+    console.log('Selected phones for comparison:', selectedPhones);
+}
+
+// Function to fetch and compare selected phones
+async function comparePhones() {
+    if (selectedPhones.length !== 2) {
+        alert('Please select exactly 2 phones for comparison.');
+        return;
+    }
+
+    try {
+        // Fetch details for the selected phones
+        const phoneDetails = await Promise.all(
+            selectedPhones.map((phone) =>
+                fetch(`/phones/${phone.id}`).then((res) => res.json())
+            )
+        );
+
+        displayComparisonTable(phoneDetails);
+    } catch (error) {
+        console.error('Error comparing phones:', error);
+        alert('Failed to fetch comparison details.');
+    }
+}
+
+// Function to display the comparison table
+function displayComparisonTable(phoneDetails) {
+    const comparisonContainer = document.getElementById('comparisonContainer');
+    const comparisonTable = document.getElementById('comparisonTable').querySelector('tbody');
+
+    // Clear any previous comparison data
+    comparisonTable.innerHTML = '';
+
+    // Populate the comparison table
+    const features = [
+        'model',
+        'price',
+        'company',
+        'screenSize',
+        'battery',
+        'camera',
+        'storage',
+        'processor',
+    ];
+
+    features.forEach((feature) => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${capitalizeFirstLetter(feature)}</td>
+            <td>${phoneDetails[0][feature] || 'N/A'}</td>
+            <td>${phoneDetails[1][feature] || 'N/A'}</td>
+        `;
+
+        comparisonTable.appendChild(row);
+    });
+
+    // Show the comparison container
+    comparisonContainer.style.display = 'block';
+}
+
+// Utility function to capitalize the first letter of a string
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Load phones on page load
+document.addEventListener('DOMContentLoaded', fetchPhonesForComparison);
