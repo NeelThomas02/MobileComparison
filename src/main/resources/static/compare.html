@@ -12,17 +12,16 @@
     
     <div class="select-container">
         <select id="phone1Select">
-            <!-- Options for Phone 1 -->
+            <option value="">Select Phone 1</option>
         </select>
         <select id="phone2Select">
-            <!-- Options for Phone 2 -->
+            <option value="">Select Phone 2</option>
         </select>
         <button id="compareButton">Compare</button>
     </div>
 
     <div class="comparisonResultContainer" id="comparisonResultContainer">
-        <!-- Comparison results will be displayed here -->
-        <table>
+        <table id="comparisonTable">
             <thead>
                 <tr>
                     <th>Feature</th>
@@ -31,7 +30,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Comparison data will be inserted here -->
+                <!-- Data rows will be dynamically inserted here -->
             </tbody>
         </table>
     </div>

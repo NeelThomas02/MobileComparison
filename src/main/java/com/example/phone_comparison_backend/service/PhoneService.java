@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 public class PhoneService {
@@ -83,6 +86,23 @@ public class PhoneService {
     
         return new PhoneComparison(phone1, phone2, comparisonBuilder.toString());
     }
+
+    public Map<String, Object> comparePhones(Long phone1Id, Long phone2Id) {
+    Map<String, Object> comparisonData = new HashMap<>();
+
+    Phone phone1 = phoneRepository.findById(phone1Id).orElse(null);
+    Phone phone2 = phoneRepository.findById(phone2Id).orElse(null);
+
+    if (phone1 != null && phone2 != null) {
+        comparisonData.put("Model", Map.of("phone1", phone1.getModel(), "phone2", phone2.getModel()));
+        comparisonData.put("Price", Map.of("phone1", phone1.getPrice(), "phone2", phone2.getPrice()));
+        comparisonData.put("Company", Map.of("phone1", phone1.getCompany(), "phone2", phone2.getCompany()));
+        // Add more features as necessary
+    }
+
+    return comparisonData;
+}
+
 
     private Float parsePrice(String rawPrice) {
         if (rawPrice == null || rawPrice.isEmpty()) return 0.0f;

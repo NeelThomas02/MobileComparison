@@ -84,3 +84,31 @@ img {
 .comparisonResultContainer {
     margin-top: 20px;
 }
+
+/* Comparison Table Styles */
+#comparisonTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #f9f9f9;
+}
+
+#comparisonTable thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#comparisonTable th, #comparisonTable td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+#comparisonTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#comparisonTable tr:hover {
+    background-color: #ddd;
+}

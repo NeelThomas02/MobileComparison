@@ -17,8 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@CrossOrigin(origins = "*")  // Apply CORS to all methods in this controller
 @RestController
 @RequestMapping("/phones")
 public class PhoneController {
@@ -63,13 +66,31 @@ public class PhoneController {
     }
 
     // Enable CORS for all origins (can be restricted later if needed)
-    @CrossOrigin(origins = "*")
+    // @CrossOrigin(origins = "*")
 
     // Endpoint to get all phones
     @GetMapping
     public List<Phone> getAllPhones() {
         return phoneService.getAllPhones();
     }
+
+    @GetMapping("/compare")
+public ResponseEntity<Map<String, Object>> comparePhones(@RequestParam Long phone1, @RequestParam Long phone2) {
+    try {
+        Map<String, Object> comparisonData = phoneService.comparePhones(phone1, phone2);
+        if (comparisonData == null || comparisonData.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // Return 404 if no comparison data
+        }
+        return ResponseEntity.ok(comparisonData);  // Return 200 with comparison data
+    } catch (Exception e) {
+        // Log the error to check what went wrong
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "An error occurred while fetching comparison data."));
+    }
+}
+
+
 
     // Endpoint to search phones by model or company
     @GetMapping("/search")
