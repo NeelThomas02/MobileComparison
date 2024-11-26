@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -47,8 +48,27 @@ public class PhoneService {
                 Float price = parsePrice(line[2]);
                 String company = line[3];
                 String productLink = line.length > 4 ? line[4] : "";
+
+                // New fields
+                String os = line.length > 5 ? line[5] : "";
+                String ram = line.length > 6 ? line[6] : "";
+                String rom = line.length > 7 ? line[7] : "";
+                String is5G = line.length > 8 ? line[8].trim().equalsIgnoreCase("Supported") ? "Yes" : "No" : "No";
+            String isDualSim = line.length > 9 ? line[9].trim().equalsIgnoreCase("Supported") ? "Yes" : "No" : "No";
+            String hasFastCharging = line.length > 11 ? line[11].trim().equalsIgnoreCase("Supported") ? "Yes" : "No" : "No";
+
+            // Bluetooth version and other fields
+            String bluetoothVersion = line.length > 10 ? line[10].trim().replace(",", ";") : "";
+
                 Phone phone = new Phone(model, imageUrl, price, company, productLink);
-                phone.setProductLink(productLink);
+                phone.setOs(os);
+                phone.setRam(ram);
+                phone.setRom(rom);
+                phone.set5G(is5G);
+                phone.setDualSim(isDualSim);
+                phone.setBluetoothVersion(bluetoothVersion);
+                phone.setHasFastCharging(hasFastCharging);
+
                 phoneList.add(phone);
             }
         }
@@ -65,25 +85,59 @@ public class PhoneService {
                 .orElseThrow(() -> new RuntimeException("Phone with id " + id1 + " not found"));
         Phone phone2 = phoneRepository.findById(id2)
                 .orElseThrow(() -> new RuntimeException("Phone with id " + id2 + " not found"));
-    
+
         StringBuilder comparisonBuilder = new StringBuilder();
-    
-        // Example comparisons
-        if (phone1.getPrice() < phone2.getPrice()) {
-            comparisonBuilder.append(phone1.getModel()).append(" is cheaper than ").append(phone2.getModel()).append(".\n");
-        } else if (phone1.getPrice() > phone2.getPrice()) {
-            comparisonBuilder.append(phone1.getModel()).append(" is more expensive than ").append(phone2.getModel()).append(".\n");
+
+        // Compare OS
+        if (!phone1.getOs().equals(phone2.getOs())) {
+            comparisonBuilder.append("Different OS: ").append(phone1.getOs()).append(" vs ").append(phone2.getOs()).append(".\n");
         } else {
-            comparisonBuilder.append("Both phones have the same price.\n");
+            comparisonBuilder.append("Same OS: ").append(phone1.getOs()).append(".\n");
         }
-    
-        // Add more comparisons based on other attributes
-        if (phone1.getCompany().equals(phone2.getCompany())) {
-            comparisonBuilder.append("Both phones are from the same company: ").append(phone1.getCompany()).append(".\n");
+
+        // Compare RAM
+        if (!phone1.getRam().equals(phone2.getRam())) {
+            comparisonBuilder.append("Different RAM: ").append(phone1.getRam()).append(" vs ").append(phone2.getRam()).append(".\n");
         } else {
-            comparisonBuilder.append(phone1.getCompany()).append(" vs ").append(phone2.getCompany()).append(".\n");
+            comparisonBuilder.append("Same RAM: ").append(phone1.getRam()).append(".\n");
         }
-    
+
+        // Compare ROM
+        if (!phone1.getRom().equals(phone2.getRom())) {
+            comparisonBuilder.append("Different ROM: ").append(phone1.getRom()).append(" vs ").append(phone2.getRom()).append(".\n");
+        } else {
+            comparisonBuilder.append("Same ROM: ").append(phone1.getRom()).append(".\n");
+        }
+
+        // Compare 5G capability
+        if (!phone1.getIs5G().equals(phone2.getIs5G())) {
+            comparisonBuilder.append("5G support differs.\n");
+        } else {
+            comparisonBuilder.append("Both support 5G.\n");
+        }
+
+        // Compare Dual SIM capability
+        if (!phone1.getIsDualSim().equals(phone2.getIsDualSim())) {
+            comparisonBuilder.append("Dual SIM support differs.\n");
+        } else {
+            comparisonBuilder.append("Both support Dual SIM.\n");
+        }
+
+        // Compare Bluetooth version
+        if (!phone1.getBluetoothVersion().equals(phone2.getBluetoothVersion())) {
+            comparisonBuilder.append("Different Bluetooth Version: ").append(phone1.getBluetoothVersion())
+                    .append(" vs ").append(phone2.getBluetoothVersion()).append(".\n");
+        } else {
+            comparisonBuilder.append("Same Bluetooth Version: ").append(phone1.getBluetoothVersion()).append(".\n");
+        }
+
+        // Compare Fast Charging capability
+        if (!phone1.getHasFastCharging().equals(phone2.getHasFastCharging())) {
+            comparisonBuilder.append("Fast Charging support differs.\n");
+        } else {
+            comparisonBuilder.append("Both support Fast Charging.\n");
+        }
+
         return new PhoneComparison(phone1, phone2, comparisonBuilder.toString());
     }
 
@@ -97,6 +151,13 @@ public class PhoneService {
         comparisonData.put("Model", Map.of("phone1", phone1.getModel(), "phone2", phone2.getModel()));
         comparisonData.put("Price", Map.of("phone1", phone1.getPrice(), "phone2", phone2.getPrice()));
         comparisonData.put("Company", Map.of("phone1", phone1.getCompany(), "phone2", phone2.getCompany()));
+        comparisonData.put("OS", Map.of("phone1", phone1.getOs(), "phone2", phone2.getOs()));
+        comparisonData.put("RAM", Map.of("phone1", phone1.getRam(), "phone2", phone2.getRam()));
+        comparisonData.put("ROM", Map.of("phone1", phone1.getRom(), "phone2", phone2.getRom()));
+        comparisonData.put("5G Support", Map.of("phone1", phone1.getIs5G(), "phone2", phone2.getIs5G()));
+        comparisonData.put("Dual SIM Support", Map.of("phone1", phone1.getIsDualSim(), "phone2", phone2.getIsDualSim()));
+        comparisonData.put("Bluetooth Version", Map.of("phone1", phone1.getBluetoothVersion(), "phone2", phone2.getBluetoothVersion()));
+        comparisonData.put("Fast Charging Support", Map.of("phone1", phone1.getHasFastCharging(), "phone2", phone2.getHasFastCharging()));
         // Add more features as necessary
     }
 
@@ -234,5 +295,30 @@ public class PhoneService {
             wordCompletion.insert(model);
         }
         return models;
+    }
+
+    public List<Phone> searchAndRankPhones(String searchTerm) {
+        List<Phone> allPhones = phoneRepository.findAll();
+        Map<Phone, Integer> frequencyMap = new HashMap<>();
+
+        // Count occurrences of the search term in each phone's model and company
+        for (Phone phone : allPhones) {
+            int count = countOccurrences(phone.getModel(), searchTerm) + countOccurrences(phone.getCompany(), searchTerm);
+            frequencyMap.put(phone, count);
+        }
+
+        // Sort phones based on frequency in descending order
+        return frequencyMap.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0) // Only include phones with non-zero occurrences
+                .sorted(Map.Entry.<Phone, Integer>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    private int countOccurrences(String text, String searchTerm) {
+        if (text == null || searchTerm == null || searchTerm.isEmpty()) {
+            return 0;
+        }
+        return (text.toLowerCase().length() - text.toLowerCase().replace(searchTerm.toLowerCase(), "").length()) / searchTerm.length();
     }
 }

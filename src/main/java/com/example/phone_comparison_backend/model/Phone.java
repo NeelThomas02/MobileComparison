@@ -2,6 +2,7 @@ package com.example.phone_comparison_backend.model;
 
 import jakarta.persistence.*;
 
+
 @Entity
 public class Phone {
 
@@ -10,29 +11,24 @@ public class Phone {
     private Long id;
 
     private String model;
-
     @Column(name = "image_url", length = 1000)
-    private String imageUrl; // The image URL for the phone
-
-    private Float price; // Price of the phone
-
-    private String company; // Company name
-
+    private String imageUrl;
+    private Float price;
+    private String company;
     private String productLink;
 
-    // Add getter and setter for productLink
-    public String getProductLink() {
-        return productLink;
+    // New fields
+    private String os;
+    private String ram;
+    private String rom;
+    private String is5G;
+    private String isDualSim;
+    private String bluetoothVersion;
+    private String hasFastCharging;
+
+    public Phone() {
     }
 
-    public void setProductLink(String productLink) {
-        this.productLink = productLink;
-    }
-
-    // Default constructor
-    public Phone() {}
-
-    // Constructor to initialize the Phone object with the required fields
     public Phone(String model, String imageUrl, Float price, String company, String productLink) {
         this.model = model;
         this.imageUrl = imageUrl;
@@ -41,7 +37,6 @@ public class Phone {
         this.productLink = productLink;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -82,9 +77,86 @@ public class Phone {
         this.company = company;
     }
 
+    public String getProductLink() {
+        return productLink;
+    }
+
+    public void setProductLink(String productLink) {
+        this.productLink = productLink;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
+        this.os = os;
+    }
+
+    public String getRam() {
+        return ram;
+    }
+
+    public void setRam(String ram) {
+        this.ram = ram;
+    }
+
+    public String getRom() {
+        return rom;
+    }
+
+    public void setRom(String rom) {
+        this.rom = rom;
+    }
+
+    public String getIs5G() {
+        return is5G;
+    }
+
+    public void set5G(String is5G) {
+        this.is5G = is5G;
+    }
+
+    public String getIsDualSim() {
+        return isDualSim;
+    }
+
+    public void setDualSim(String isDualSim) {
+        this.isDualSim = isDualSim;
+    }
+
+    public String getBluetoothVersion() {
+        return bluetoothVersion;
+    }
+
+    public void setBluetoothVersion(String bluetoothVersion) {
+        this.bluetoothVersion = bluetoothVersion;
+    }
+
+    public String getHasFastCharging() {
+        return hasFastCharging;
+    }
+
+    public void setHasFastCharging(String hasFastCharging) {
+        this.hasFastCharging = hasFastCharging;
+    }
+
     @Override
     public String toString() {
-        return "Phone{id=" + id + ", model='" + model + "', imageUrl='" + imageUrl + "', price=" + price + ", company='" + company + "'}";
+        return "Phone{" +
+                "id=" + id +
+                ", model='" + model + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", price=" + price +
+                ", company='" + company + '\'' +
+                ", productLink='" + productLink + '\'' +
+                ", os='" + os + '\'' +
+                ", ram='" + ram + '\'' +
+                ", rom='" + rom + '\'' +
+                ", is5G='" + is5G + '\'' +
+                ", isDualSim='" + isDualSim + '\'' +
+                ", bluetoothVersion='" + bluetoothVersion + '\'' +
+                ", hasFastCharging='" + hasFastCharging + '\'' +
+                '}';
     }
-    
 }
