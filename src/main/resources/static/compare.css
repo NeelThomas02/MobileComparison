@@ -1,0 +1,206 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    background-color: #1e3a8a;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-shadow: 1px 1px 4px #000000;
+}
+
+/* Container for the comparison section */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title Styles */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+/* Dropdown Styles */
+.select-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+select {
+    width: 48%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Button Styles */
+button {
+    padding: 10px 15px;
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Comparison Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff; /* Blue */
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Light gray for even rows */
+}
+
+tr:hover {
+    background-color: #e9ecef; /* Light gray on hover */
+}
+
+/* Image Styles */
+img {
+    max-width: 100px; /* Limit image size */
+}
+
+/* Result Container Styles */
+.comparisonResultContainer {
+    margin-top: 20px;
+}
+
+/* Comparison Table Styles */
+#comparisonTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: #f9f9f9;
+}
+
+#comparisonTable thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#comparisonTable th, #comparisonTable td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+#comparisonTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#comparisonTable tr:hover {
+    background-color: #ddd;
+}
+
+/* Navigation Bar Styling */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Navbar List */
+#navbar {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+#navbar li {
+    cursor: pointer;
+    padding: 10px;
+    color: #1e3a8a;
+    font-size: 20px;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+#navbar li:hover {
+    color: #2563eb;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for the main navbar items */
+#navbar {
+    display: flex;
+    list-style: none;
+    gap: 20px; /* Space out the items */
+    flex-grow: 1; /* Allow the navbar to grow and take available space */
+}
+
+/* Align the Register and Login buttons to the right */
+.auth-links {
+    margin-left: auto; /* Push the Register and Login to the far right */
+    list-style: none;
+    display: flex;
+    gap: 10px; /* Space between Register and Login */
+}
+
+/* Styling for the Register and Login buttons */
+.auth-links li a {
+    text-decoration: none;
+    padding: 10px;
+    color: #1e3a8a;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for Register and Login buttons */
+.auth-links li a:hover {
+    color: #2563eb;
+}
+
+a{
+    text-decoration: none;
+    color: #1e3a8a;
+}
+
+a:hover{
+    color: rgb(15, 138, 239);
+}

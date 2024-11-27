@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Comparison</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <h1>Smartphone Recommendation System</h1>
+</header>
+
+<!-- Navigation Bar Section -->
+<nav>
+    <ul id="navbar">
+        <li><a href="/"> Home </a></li>
+        <li><a href="compare.html">Compare</a></li>
+        <li>Contact</li>
+        <!-- Wrap Register and Login in a container to keep them together -->
+        <ul class="auth-links">
+            <li><a href="registration.html" class="btn">Register</a></li> <!-- Link to Register Page -->
+            <li><a href="./login.html" class="btn">Login</a></li>
+        </ul>
+    </ul>
+</nav>
+
+<!-- Search Bar and Company Filter Section -->
+<div class="filters">
+    <!-- Search Bar -->
+    <input type="text" id="searchInput" placeholder="Search for phones..." oninput="handleSearchAndCount(); displayDatabaseWordCount(); handleWordCompletion()">
+    <div id="databaseWordCountDisplay"></div>
+
+    <!-- Company Filter Dropdown -->
+    <select id="companyFilter" onchange="filterPhones()">
+        <option value="">Select Company</option>
+        <!-- Populate dynamically with companies -->
+    </select>
+
+    <!-- Sort Filter Dropdown -->
+    <select id="sortFilter" onchange="applySort()">
+        <option value="" disabled selected>Sort by</option>
+        <option value="priceLowHigh">Price (Low-High)</option>
+        <option value="priceHighLow">Price (High-Low)</option>
+        <option value="modelAZ">Models (A-Z)</option>
+        <option value="modelZA">Models (Z-A)</option>
+    </select>
+    <button id="resetFiltersBtn" class="button" onclick="resetAllFilters()">Reset Filters</button>
+</div>
+
+ <div class="filters">
+ <!-- Suggestions Section -->
+ <div id="suggestionsContainer" style="display: none; border: 1px solid #ccc; max-height: 200px; overflow-y: auto;"></div>
+</div>
+<div class="filters">
+    <!-- Frequency Display Section -->
+        <div></div>
+    <div id="frequencyDisplay" style="display: none;"></div>
+    </div>
+<!-- Phone List Section -->
+<div class="phone-list-container">
+    <h2>Available Phones</h2>
+    <div id="phoneListContainer" class="phone-list"></div>
+</div>
+
+<!-- Popup for error message -->
+<div id="errorPopup" class="popup-container" style="display: none;">
+    <div class="popup-content">
+        <span id="closePopup" class="popup-close">&times;</span>
+        <p id="errorMessage">Please enter the correct word.</p>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="footer-content">
+        <div class="special-features">
+            <h3>What Makes Our Project Special</h3>
+            <ul class="features-list">
+                <li>Front End GUI</li>
+                <li>Email validation and regular expressions</li>
+                <li>URL validation using patterns</li>
+                <li>Spell checking</li>
+                <li>Word completion</li>
+                <li>Frequency count</li>
+                <li>Search Frequency</li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="compare.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Phone Comparison</title>
+</head>
+<body>
+    <header>
+    <h1>Compare Phones</h1>
+</header>
+    <!-- Navigation Bar Section -->
+<nav>
+    <ul id="navbar">
+        <li><a href="index.html"> Home </a></li>
+        <li><a href="compare.html">Compare</a></li>
+        <li>Contact</li>
+        <!-- Wrap Register and Login in a container to keep them together -->
+        <ul class="auth-links">
+            <li><a href="registration.html" class="btn">Register</a></li> <!-- Link to Register Page -->
+            <li><a href="./login.html" class="btn">Login</a></li>
+        </ul>
+    </ul>
+</nav>
+
+    <div class="select-container">
+        <select id="phone1Select">
+            <option value="">Select Phone 1</option>
+        </select>
+        <select id="phone2Select">
+            <option value="">Select Phone 2</option>
+        </select>
+        <button id="compareButton">Compare</button>
+    </div>
+
+    <div class="comparisonResultContainer" id="comparisonResultContainer">
+        <table id="comparisonTable">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Phone 1</th>
+                    <th>Phone 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+<script src="compare.js"></script> <!-- Link to your JavaScript file -->
+</body>
+</html>

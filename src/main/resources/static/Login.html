@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0066cc;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="email"], input[type="password"], input[type="text"] {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004d99;
+        }
+
+        .register-btn {
+            background-color: #4CAF50;
+            margin-top: 10px;
+        }
+
+        .register-btn:hover {
+            background-color: #3e8e41;
+        }
+
+        p {
+            text-align: center;
+            font-size: 14px;
+            color: #cc0000;
+            margin-top: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Login Page</h2>
+        <form id="loginForm" action="/auth/login" method="post">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit">Login</button>
+            <button type="button" class="register-btn" id="registerButton">Register</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById("loginForm");
+        const registerButton = document.getElementById("registerButton");
+
+        // Regex for validation
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const passwordRegex = /^[A-Za-z0-9@#$%^&+=]{6,20}$/;
+
+        // Form submission handler
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const message = document.getElementById("message");
+
+            if (!emailRegex.test(email)) {
+                message.textContent = "Please enter a valid email address.";
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                message.textContent = "Password must be 6-20 characters long and include only letters, numbers, or @#$%^&+=";
+                return;
+            }
+
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (response.redirected) {
+                window.location.href = response.url; // Redirect to the dashboard or home page
+            } else {
+                message.textContent = "Invalid login credentials. Please try again.";
+            }
+        });
+
+        // Redirect to registration page
+        registerButton.addEventListener("click", () => {
+            window.location.href = "registration.html";
+        });
+    </script>
+</body>
+</html>
